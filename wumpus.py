@@ -2,6 +2,14 @@ from queue import PriorityQueue
 import random
 import matplotlib.pyplot as plt
 import pygame
+from enum import Enum
+
+class Action(Enum):
+    LEFT = 1
+    UP = 2
+    DOWN = 3
+    RIGHT = 4
+    SHOOT = 5
 
 pygame.init()
 
@@ -25,7 +33,7 @@ PINK = (255, 105, 180)
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Move your step")
 font = pygame.font.Font('freesansbold.ttf', 18)
-tile_font = pygame.font.Font('freesansbold.ttf', 10)
+tile_font = pygame.font.Font('freesansbold.ttf', 30)
 Error_area = pygame.Rect(WIDTH // 4-50, HEIGHT//2 -35, 400, 120)
 
 class Button:
@@ -83,10 +91,25 @@ class Node:
         self.check_wumpus = False
         self.check_gold = False
         self.check_exist = False
+        self.check_agent = False
+        self.image = ''
         
+        #direction of agent
+        self.direction = 0
+           
         #check open node or not
         self.check_open = False
-  
+    
+    def set_image(self):
+        if(self.check_pit):
+            self.image = pygame.image.load('./assets/pit.png')
+        elif(self.check_wumpus):
+            self.image = pygame.image.load('./assets/wumpus.png')
+        elif(self.check_gold):
+            self.image = pygame.image.load('./assets/gold.png')
+        else:
+            self.image = pygame.image.load('./assets/terrain.png')
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
     def increment_visit_count(self):
         self.visit_count +=1
     
@@ -98,13 +121,31 @@ class Node:
         return self.x, self.y
         
     def draw(self, window):
-        
+        self.set_image()
         if(self.check_open):
-            pygame.draw.rect(window, self.color, (self.y * self.width, self.x * self.height + 100, self.width, self.height + 100))
+            window.blit(self.image,(self.y * self.width, self.x * self.height + 100, self.width, self.height+100))
             text_surface = tile_font.render(self.text, True, BLACK)
             text_rect = text_surface.get_rect(center=((self.y * self.width) + self.width // 2, (self.x * self.height + 100) + self.height // 2))
             window.blit(text_surface, text_rect)
-        else:
+        if(self.check_agent == True):
+            if(self.direction ==Action.LEFT):
+                image = pygame.image.load('./assets/agent_left.png')
+                
+            if(self.direction ==Action.UP):
+                image = pygame.image.load('./assets/agent_up.png')
+                
+            if(self.direction ==Action.RIGHT):
+                image = pygame.image.load('./assets/agent_right.png')
+        
+            if(self.direction ==Action.DOWN):
+                image = pygame.image.load('./assets/agent_down.png')
+            image = pygame.transform.scale(image, (self.width, self.height))
+            window.blit(image,(self.y * self.width, self.x * self.height + 100, self.width, self.height+100))   
+            text_surface = tile_font.render(self.text, True, BLACK)
+            text_rect = text_surface.get_rect(center=((self.y * self.width) + self.width // 2, (self.x * self.height + 100) + self.height // 2))
+            window.blit(text_surface, text_rect)
+            #pygame.draw.rect(window, RED, (self.y * self.width, self.x * self.height + 100, self.width, self.height + 100))
+        if(self.check_open == False):
             pygame.draw.rect(window, GREY, (self.y * self.width, self.x * self.height + 100, self.width, self.height + 100))
        
         
@@ -167,6 +208,77 @@ class Node:
         return False
 
 
+
+class agent():
+    def __init__(self,x,y,size) -> None:
+        self.current_direction = Action.RIGHT
+        self.is_alive = True
+        self.x_coord = x
+        self.y_coord = y
+        self.size = size
+        
+    def move_agent(self, key,grid):
+        current_x = self.x_coord
+        current_y = self.y_coord
+        if key == "w":
+            if(self.current_direction == Action.UP):
+                if(0 < self.x_coord):
+                    self.x_coord -= 1
+            self.current_direction = Action.UP
+        
+        if key == "s":
+            if(self.current_direction == Action.DOWN):
+                if(self.x_coord < self.size - 1):
+                    self.x_coord +=1
+            self.current_direction = Action.DOWN
+        
+        if key == "a":
+            if(self.current_direction == Action.LEFT):
+                if(0 < self.y_coord):
+                    self.y_coord -=1
+            self.current_direction = Action.LEFT
+        
+        if key == "d":
+            if(self.current_direction == Action.RIGHT):
+                if( self.y_coord < self.size -1):
+                    self.y_coord +=1
+            self.current_direction = Action.RIGHT
+        
+        self.update_previous_node(grid,current_x,current_y) 
+        self.draw_agent(grid)   
+        
+    def update_previous_node(self,grid,x,y):
+        grid[x][y].check_agent=False
+        grid[x][y].direction = 0
+        grid[x][y].draw(window)
+    
+    def is_death(self):
+        return self.is_alive == False
+    
+    def draw_agent(self,grid):
+        grid[self.x_coord][self.y_coord].check_agent = True
+        grid[self.x_coord][self.y_coord].check_open =True
+        if(grid[self.x_coord][self.y_coord].check_wumpus == True
+           or grid[self.x_coord][self.y_coord].check_pit == True):
+            self.is_alive = False
+        grid[self.x_coord][self.y_coord].direction = self.current_direction
+        grid[self.x_coord][self.y_coord].draw(window)
+
+# Show the game over screen to notify players
+def draw_game_over_message(window):
+    pygame.draw.rect(window,RED, Error_area,0,50)
+    font1 = pygame.font.Font('freesansbold.ttf', 54)
+    text = font1.render('CHICKEN', True, YELLOW)
+    text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    font2 = pygame.font.Font('freesansbold.ttf', 42)
+    text_level = font2.render('Game Over', True, YELLOW)
+    text_level_rect = text_level.get_rect(center=(WIDTH // 2, HEIGHT // 2+54))
+    window.blit(text, text_rect)
+    window.blit(text_level, text_level_rect)
+    
+    pygame.display.update()
+    
+
 #read data from file
 def read_grid_from_file(file_path):
     grid = []
@@ -178,6 +290,7 @@ def read_grid_from_file(file_path):
             
     return grid,size
 
+# random the position of agent
 def random_agent(size,grid_color):
     while True:
         x = random.randint(0, size-1)
@@ -186,10 +299,18 @@ def random_agent(size,grid_color):
            grid_color[x][y].check_wumpus == False and grid_color[x][y].check_gold == False and
            grid_color[x][y].check_exist == False):
             grid_color[x][y].check_open = True
-            return grid_color[x][y]
-            
-    
+            manual_agent = agent(x,y,size)
+            return manual_agent,x,y
 
+# When game over, players play the current map and agent (old map)
+def previous_agent(size,grid_color,x,y):
+    if(grid_color[x][y].check_pit == False and grid_color[x][y].check_breeze == False and
+           grid_color[x][y].check_wumpus == False and grid_color[x][y].check_gold == False and
+           grid_color[x][y].check_exist == False):
+            grid_color[x][y].check_open = True
+            manual_agent = agent(x,y,size)
+            return manual_agent
+         
 # generate stench, breeze
 def generate_factor_inputfile(grid_color, size):
     dir =[(1,0),(-1,0),(0,1),(0,-1)]
@@ -225,9 +346,6 @@ def generate_factor_inputfile(grid_color, size):
     grid_color[size-1][0].check_exist == True
     return grid_color
                 
-
-                
-
 #draw each node of grid
 def make_grid_color(size, width, height, grid):
     grid_color = []
@@ -278,37 +396,79 @@ def main(window, width, height):
     file = 'input.txt'
     temp_grid,size = read_grid_from_file(file)
     grid = make_grid_color(size,width,height,temp_grid)
-    agent = random_agent(size,grid)
-    agent.set_start_color()
+    agent,x_agent,y_agent = random_agent(size,grid)
+    agent.draw_agent(grid)
     click1 = False
     click4 = False
     one_press = True
-    
+    move_left = False
+    move_up = False
+    move_down = False
+    move_right = False
     count = 0
-
+    new_game = False
     run = True
     while run:
+        if(agent.is_death()):
+            draw_game_over_message(window)
+            pygame.time.delay(500)
+            new_game = True
+            
         window.fill(WHITE)
-        start_button = Button(10, 10, "Start", click1)
-        restart = Button(140, 10, "restart", click4)
+        if(new_game == True):
+            grid= make_grid_color(size, width, height, temp_grid)
+            agent = previous_agent(size,grid,x_agent,y_agent)
+            agent.draw_agent(grid)
+            new_game = False
+        # start_button = Button(10, 10, "Start", click1)
+        # restart = Button(140, 10, "restart", click4)
         draw_update(window,grid,size,width,height)     
         
-        if(pygame.mouse.get_pressed()[0]) and one_press:
-            one_press = False             
-            if(start_button.is_click()):
-                click1 = True
-                click4 = False
-                restart.remove_click()
-                restart.draw()
+        # if(pygame.mouse.get_pressed()[0]) and one_press:
+        #     one_press = False             
+        #     if(start_button.is_click()):
+        #         click1 = True
+        #         click4 = False
+        #         restart.remove_click()
+        #         restart.draw()
                 
-            if(restart.is_click()):
-                click4 = True
-                click1 = False
-                start_button.remove_click()
-                start_button.draw()
-                grid= make_grid_color(size, width, height, temp_grid)
-            
-            
+        #     if(restart.is_click()):
+        #         click4 = True
+        #         click1 = False
+        #         start_button.remove_click()
+        #         start_button.draw()
+        #         grid= make_grid_color(size, width, height, temp_grid)
+        #         agent = random_agent(size,grid)
+        #         agent.draw_agent(grid)        
+        keys = pygame.key.get_pressed()
+        pygame.key.set_repeat(0)
+        # Check for key presses and play game manual
+        if keys[pygame.K_a] and not move_left:
+            move_left = True
+            agent.move_agent('a', grid)
+        elif not keys[pygame.K_a]:
+            move_left = False
+
+        if keys[pygame.K_w] and not move_up:
+            move_up = True
+            agent.move_agent('w', grid)
+        elif not keys[pygame.K_w]:
+            move_up = False
+
+        if keys[pygame.K_s] and not move_down:
+            move_down = True
+            agent.move_agent('s', grid)
+        elif not keys[pygame.K_s]:
+            move_down = False
+
+        if keys[pygame.K_d] and not move_right:
+            move_right = True
+            agent.move_agent('d', grid)
+        elif not keys[pygame.K_d]:
+            move_right = False
+        
+        
+        
         if(not pygame.mouse.get_pressed()[0]) and not one_press:
             one_press = True
              
