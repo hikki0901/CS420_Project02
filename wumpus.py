@@ -32,12 +32,13 @@ VSBLUE = (192,250,244)
 IRISBLUE = (0, 181, 204)
 PINK = (255, 105, 180)
 
-window = pygame.display.set_mode((WIDTH, HEIGHT))
+WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Move your step")
-font = pygame.font.Font('freesansbold.ttf', 18)
-tile_font = pygame.font.Font('freesansbold.ttf', 30)
-Error_area = pygame.Rect(WIDTH // 4-50, HEIGHT//2 -35, 400, 120)
-
+font = pygame.font.Font('dlxfont.ttf', 18)
+tile_font = pygame.font.Font('dlxfont.ttf', 12)
+Error_area = pygame.Rect(WIDTH // 4-50, HEIGHT//2 -35, 350, 120)
+game_area = pygame.Rect(0,100,WIDTH,HEIGHT-100) 
+header_area = pygame.Rect(0,0,WIDTH,100)
 class Button:
     def __init__(self, x, y, text, click):
         self.x = x
@@ -48,12 +49,12 @@ class Button:
         
     def draw(self):
         text_button = font.render(self.text, True, BLACK)
-        button = pygame.rect.Rect((self.x, self.y), (120, 50))
+        button = pygame.rect.Rect((self.x, self.y), (160, 50))
         if self.click:
-            pygame.draw.rect(window, GREEN, button, 0,5)
+            pygame.draw.rect(WINDOW, GREEN, button, 0,5)
         else:
-            pygame.draw.rect(window, IRISBLUE, button, 0,5)
-        window.blit(text_button,(self.x +20, self.y + 15))
+            pygame.draw.rect(WINDOW, IRISBLUE, button, 0,5)
+        WINDOW.blit(text_button,(self.x +20, self.y + 15))
     
     def is_click(self) -> bool:
         mouse = pygame.mouse.get_pos()
@@ -221,35 +222,41 @@ class agent():
         self.y_coord = y
         self.size = size
         self.check_win = False
+        self.points = 0
         
-    def move_agent(self, key,grid):
+    def move_agent(self, key,grid,window):
         current_x = self.x_coord
         current_y = self.y_coord
         if key == "w":
             if(self.current_direction == Action.UP):
                 if(0 < self.x_coord):
                     self.x_coord -= 1
+                    self.points -= 10
             self.current_direction = Action.UP
         
         if key == "s":
             if(self.current_direction == Action.DOWN):
                 if(self.x_coord < self.size - 1):
                     self.x_coord +=1
+                    self.points -= 10
             self.current_direction = Action.DOWN
         
         if key == "a":
             if(self.current_direction == Action.LEFT):
                 if(0 < self.y_coord):
                     self.y_coord -=1
+                    self.points -=10
             self.current_direction = Action.LEFT
         
         if key == "d":
             if(self.current_direction == Action.RIGHT):
                 if( self.y_coord < self.size -1):
                     self.y_coord +=1
+                    self.points -= 10
             self.current_direction = Action.RIGHT
         
         if key == "space":
+            self.points -= 100
             action_coord= [(0,0),(0,-1), (-1,0),(1,0),(0,1)]
             temp_x = self.x_coord + action_coord[self.current_direction.value][0]
             temp_y = self.y_coord + action_coord[self.current_direction.value][1]
@@ -272,22 +279,22 @@ class agent():
                     
         print(self.x_coord,self.y_coord)       
         
-        self.update_previous_node(grid,current_x,current_y) 
-        self.draw_agent(grid)   
+        self.update_previous_node(grid,current_x,current_y,window) 
+        self.draw_agent(grid,window)   
 
-    # reload map after kill wumpus
-    def reload_map(self,grid):
-        for i in range(self.size):
-            for j in range(self.size):
-                if(grid[i][j].check_wumpus == True):
-                    dir = [(-1,0),(0,-1),(1,0),(0,1)]
-                    for d in dir:
-                        x_stench = i + d[0]
-                        y_stench = j + d[1]
-                        if (0<= x_stench <self.size and 0<= y_stench < self.size):
-                            grid[x_stench][y_stench].check_stench = True 
+    # # reload map after kill wumpus
+    # def reload_map(self,grid):
+    #     for i in range(self.size):
+    #         for j in range(self.size):
+    #             if(grid[i][j].check_wumpus == True):
+    #                 dir = [(-1,0),(0,-1),(1,0),(0,1)]
+    #                 for d in dir:
+    #                     x_stench = i + d[0]
+    #                     y_stench = j + d[1]
+    #                     if (0<= x_stench <self.size and 0<= y_stench < self.size):
+    #                         grid[x_stench][y_stench].check_stench = True 
        
-    def update_previous_node(self,grid,x,y):
+    def update_previous_node(self,grid,x,y,window):
         grid[x][y].check_agent=False
         grid[x][y].direction = 0
         grid[x][y].draw(window)
@@ -295,30 +302,54 @@ class agent():
     def is_death(self):
         return self.is_alive == False
     
-    def draw_agent(self,grid):
+    def draw_agent(self,grid,window):
+        self.draw_points()
         grid[self.x_coord][self.y_coord].check_agent = True
         grid[self.x_coord][self.y_coord].check_open =True
         if(grid[self.x_coord][self.y_coord].check_wumpus == True
            or grid[self.x_coord][self.y_coord].check_pit == True):
+            self.points -=10000 # death
             self.is_alive = False
-        if(grid[self.x_coord][self.y_coord].check_gold == True):
+        if(grid[self.x_coord][self.y_coord].check_exist == True):
             self.check_win = True
+        if(grid[self.x_coord][self.y_coord].check_gold == True):
+            self.points += 1000 # gain gold
+            grid[self.x_coord][self.y_coord].check_gold = False
+        self.draw_points()
+        
+        
+        ## draw map
         grid[self.x_coord][self.y_coord].direction = self.current_direction
         grid[self.x_coord][self.y_coord].draw(window)
+    
+    def draw_points(self):
+        font_top = pygame.font.Font('dlxfont.ttf', 14)
+        points_surface = font_top.render("Points: " + str(self.points), True, PINK)
+        points_rect = points_surface.get_rect()
+        points_rect.center = 400, 100//2
+        
+        WINDOW.fill(WHITE, points_rect)
+        
+        # Blit the text surface onto the screen
+        WINDOW.blit(points_surface, points_rect)
+
+        # Update the display only in the region where the points are
+        pygame.display.flip()
+        
 
 # Show the game over screen to notify players
 def draw_game_over_message(window,text1,text2):
-    pygame.draw.rect(window,RED, Error_area,0,50)
-    font1 = pygame.font.Font('freesansbold.ttf', 54)
+    pygame.draw.rect(window,RED, Error_area,0,40)
+    font1 = pygame.font.Font('dlxfont.ttf', 42)
     text = font1.render(text1, True, YELLOW)
-    text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-    font2 = pygame.font.Font('freesansbold.ttf', 42)
+    text_rect = text.get_rect(center=(WIDTH // 2 - 5, HEIGHT // 2))
+    font2 = pygame.font.Font('dlxfont.ttf', 32)
     text_level = font2.render(text2, True, YELLOW)
     text_level_rect = text_level.get_rect(center=(WIDTH // 2, HEIGHT // 2+54))
     window.blit(text, text_rect)
     window.blit(text_level, text_level_rect)
     
-    pygame.display.update()
+    pygame.display.flip()
     
 
 #read data from file
@@ -383,7 +414,7 @@ def generate_factor_inputfile(grid_color, size):
                             grid_color[x][y].set_text("S")
                         
                         grid_color[x][y].check_stench = True
-    grid_color[size-1][0].check_exist == True
+    grid_color[size-1][0].check_exist = True
     return grid_color
                 
 #draw each node of grid
@@ -436,93 +467,102 @@ def main(window, width, height):
     temp_grid,size = read_grid_from_file(file)
     grid = make_grid_color(size,width,height,temp_grid)
     agent,x_agent,y_agent = random_agent(size,grid)
-    agent.draw_agent(grid)
-    click1 = False
     click4 = False
     one_press = True
+    
     move_left = False
     move_up = False
     move_down = False
     move_right = False
     kill_press =False
-    count = 0
+
     new_game = False
     run = True
+    window.fill(WHITE)
+    agent.draw_agent(grid,window)
     while run:
+        pygame.draw.rect(window, WHITE, game_area)
+        # move to the exist room
         if(agent.check_win):
+            draw_update(window,grid,size,width,height) 
             draw_game_over_message(window,"WINNER","GOOD JOB!")
             pygame.time.delay(500)
             new_game = True
-        if(agent.is_death()):
+
+        # kill by pit or wumpus
+        if(agent.is_alive == False):
+            draw_update(window,grid,size,width,height) 
             draw_game_over_message(window,"CHICKEN","GAME OVER")
             pygame.time.delay(500)
             new_game = True
             
-        window.fill(WHITE)
+        
         if(new_game == True):
+            pygame.draw.rect(window, WHITE, header_area)
             grid= make_grid_color(size, width, height, temp_grid)
+            
             if(agent.check_win):
                 agent,x_agent,y_agent = random_agent(size,grid)
             else:
                 agent = previous_agent(size,grid,x_agent,y_agent)
-            agent.draw_agent(grid)
+            
+            agent.draw_agent(grid,window)
             new_game = False
-        # start_button = Button(10, 10, "Start", click1)
-        # restart = Button(140, 10, "restart", click4)
+
+        restart = Button(30, 25, "Restart", click4)
         draw_update(window,grid,size,width,height)     
         
-        # if(pygame.mouse.get_pressed()[0]) and one_press:
-        #     one_press = False             
-        #     if(start_button.is_click()):
-        #         click1 = True
-        #         click4 = False
-        #         restart.remove_click()
-        #         restart.draw()
+        if(pygame.mouse.get_pressed()[0]) and one_press:
+            one_press = False           
                 
-        #     if(restart.is_click()):
-        #         click4 = True
-        #         click1 = False
-        #         start_button.remove_click()
-        #         start_button.draw()
-        #         grid= make_grid_color(size, width, height, temp_grid)
-        #         agent = random_agent(size,grid)
-        #         agent.draw_agent(grid)        
+            if(restart.is_click()):
+                pygame.draw.rect(window, WHITE, header_area)
+                click4 = True
+                
+                grid= make_grid_color(size, width, height, temp_grid)
+                agent,x_agent,y_agent = random_agent(size,grid)
+                agent.draw_agent(grid,window)
+                       
         keys = pygame.key.get_pressed()
         pygame.key.set_repeat(0)
+        
         # Check for key presses and play game manual
         if keys[pygame.K_a] and not move_left:
             move_left = True
-            agent.move_agent('a', grid)
+            agent.move_agent('a', grid,window)
         elif not keys[pygame.K_a]:
             move_left = False
 
         if keys[pygame.K_w] and not move_up:
             move_up = True
-            agent.move_agent('w', grid)
+            agent.move_agent('w', grid,window)
         elif not keys[pygame.K_w]:
             move_up = False
 
         if keys[pygame.K_s] and not move_down:
             move_down = True
-            agent.move_agent('s', grid)
+            agent.move_agent('s', grid,window)
         elif not keys[pygame.K_s]:
             move_down = False
 
         if keys[pygame.K_d] and not move_right:
             move_right = True
-            agent.move_agent('d', grid)
+            agent.move_agent('d', grid,window)
         elif not keys[pygame.K_d]:
             move_right = False
         
         if keys[pygame.K_SPACE] and not kill_press:
             kill_press = True
-            agent.move_agent('space', grid)
+            agent.move_agent('space', grid,window)
         elif not keys[pygame.K_SPACE]:
             kill_press = False
         
         
         if(not pygame.mouse.get_pressed()[0]) and not one_press:
             one_press = True
+            click4 = False
+            restart.remove_click()
+            restart.draw()
              
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -531,4 +571,4 @@ def main(window, width, height):
     pygame.quit()
     
 if __name__ == "__main__":
-    main(window, WIDTH,HEIGHT-100)
+    main(WINDOW, WIDTH,HEIGHT-100)
