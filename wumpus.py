@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import pygame
 from enum import Enum
 
-
-
 class Action(Enum):
     LEFT = 1
     UP = 2
@@ -86,6 +84,10 @@ class Node:
         self.size = size
         self.text = ""
         self.visit_count = 0
+        self.left = ""
+        self.right = ""
+        self.up = ""
+        self.down = ""
         
         # feature of node: stench,breeze, pit, wumpus
         self.check_pit = False
@@ -208,7 +210,7 @@ class Node:
     
     def is_gold(self):
         return self.check_gold
-
+    
     def __lt__(self, other):
         return False
 
@@ -350,8 +352,15 @@ def draw_game_over_message(window,text1,text2):
     window.blit(text_level, text_level_rect)
     
     pygame.display.flip()
-    
 
+
+def setWall(grid, size):
+    for i in range(size):
+        grid[0][i].up = "wall"
+        grid[i][0].left = "wall"
+        grid[size-1][i].down = "wall"
+        grid[i][size-1].right = "wall"
+    
 #read data from file
 def read_grid_from_file(file_path):
     grid = []
@@ -360,7 +369,8 @@ def read_grid_from_file(file_path):
         for i in range(size):
             data = file.readline().strip().split('.')
             grid.append(data)
-            
+    
+    
     return grid,size
 
 # random the position of agent
@@ -466,6 +476,7 @@ def main(window, width, height):
     file = 'input.txt'
     temp_grid,size = read_grid_from_file(file)
     grid = make_grid_color(size,width,height,temp_grid)
+    setWall(grid, size)
     agent,x_agent,y_agent = random_agent(size,grid)
     click4 = False
     one_press = True
