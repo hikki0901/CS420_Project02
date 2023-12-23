@@ -72,7 +72,32 @@ class agent():
         self.size = size
         self.check_win = False
         self.points = 0
+        self.neighbor = []
+        self.neighbor_action = []
+    
+    def get_neighbors(self, grid):
+        self.neighbor = []
+        dir = [(0, -1), (-1, 0), (1, 0), (0, 1)]
         
+        i = 0
+        for dir in dir:
+            nx = self.x_coord + dir[0]
+            ny = self.y_coord + dir[1]
+            check = True
+
+            if grid[nx][ny] == "wall":
+                check = False
+
+            if check == True:
+                if i == 0: self.neighbor_action.append(act.Action.LEFT)
+                if i == 1: self.neighbor_action.append(act.Action.UP)
+                if i == 2: self.neighbor_action.append(act.Action.DOWN)
+                if i == 3: self.neighbor_action.append(act.Action.RIGHT)
+                self.neighbor.append(grid[nx][ny])
+            
+            i =  i + 1
+
+
     def move_agent(self, key,grid,window):
         current_x = self.x_coord
         current_y = self.y_coord
