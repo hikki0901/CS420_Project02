@@ -1,6 +1,7 @@
 import action as act
 import init
 from init import pygame, random
+from kb import knownNode
 
 def setWall(grid, size):
     for i in range(size):
@@ -74,6 +75,7 @@ class agent():
         self.points = 0
         self.neighbor = []
         self.neighbor_action = []
+        self.knowledge_base = []
     
     def get_neighbors(self, grid):
         self.neighbor = []
@@ -97,6 +99,63 @@ class agent():
             
             i =  i + 1
 
+    def add_or_modify_node (self, x, y, isPit, isWumpus):
+        for node in self.knowledge_base:
+            if node.x == x and node.y == y:
+                if isPit == 3:
+                    node.isPit = isPit
+                else:
+                    if node.isPit < 2 :
+                        node.isPit += isPit
+                if isWumpus == 3:
+                    node.isWumpus = isWumpus
+                else:
+                    if node.isWumpus < 2 :
+                        node.isWumpus += isWumpus
+                return
+        newNode = knownNode(x, y, isPit, isWumpus)
+        self.knowledge_base.append(newNode)
+                
+    def addToKB(self, curNode):
+        if curNode.is_breeze and not curNode.is_stench:
+            if curNode.left != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 1, 3)
+            if curNode.right != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 1, 3)
+            if curNode.up != "wall":
+                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 1, 3)
+            if curNode.down != "wall":
+                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 1, 3)
+
+        if curNode.is_stench and not curNode.is_breeze:
+            if curNode.left != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 3, 1)
+            if curNode.right != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 3, 1)
+            if curNode.up != "wall":
+                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 3, 1)
+            if curNode.down != "wall":
+                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 3, 1)
+
+        if curNode.is_stench and curNode.is_breeze:
+            if curNode.left != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 1, 1)
+            if curNode.right != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 1, 1)
+            if curNode.up != "wall":
+                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 1, 1)
+            if curNode.down != "wall":
+                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 1, 1)
+        
+        if not curNode.is_stench and not curNode.is_breeze:
+            if curNode.left != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 3, 3)
+            if curNode.right != "wall":
+                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 3, 3)
+            if curNode.up != "wall":
+                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 3, 3)
+            if curNode.down != "wall":
+                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 3, 3)
 
     def move_agent(self, key,grid,window):
         current_x = self.x_coord
