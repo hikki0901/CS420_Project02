@@ -70,10 +70,11 @@ def main(window, width, height):
                 
                 grid= drawer.make_grid_color(size, width, height, temp_grid)
                 agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
+                agent_lib.setWall(grid, size)
                 agent.draw_agent(grid,window)
                        
-        # keys = pygame.key.get_pressed()
-        # pygame.key.set_repeat(0)
+        keys = pygame.key.get_pressed()
+        pygame.key.set_repeat(0)
         
         # # Check for key presses and play game manual
         # if keys[pygame.K_a] and not move_left:
@@ -105,7 +106,16 @@ def main(window, width, height):
         #     agent.move_agent('space', grid,window)
         # elif not keys[pygame.K_SPACE]:
         #     kill_press = False
-        
+
+        if keys[pygame.K_q]:
+            agent.addToKB(grid[agent.x_coord][agent.y_coord]) 
+            print ("Knowledge base: ")
+            for node in agent.knowledge_base:
+                print (node.get_pos(), node.isPit, node.isWumpus)
+            agent.get_neighbors(grid)
+            print ("neighbor: ")
+            for node in agent.neighbor:
+                print (node.get_pos())
         
         if(not pygame.mouse.get_pressed()[0]) and not one_press:
             one_press = True

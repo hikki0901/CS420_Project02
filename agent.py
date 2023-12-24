@@ -76,28 +76,39 @@ class agent():
         self.neighbor = []
         self.neighbor_action = []
         self.knowledge_base = []
+        self.x_kb = 0
+        self.y_kb = 0
     
     def get_neighbors(self, grid):
         self.neighbor = []
-        dir = [(0, -1), (-1, 0), (1, 0), (0, 1)]
+        if grid[self.x_coord][self.y_coord].left != "wall":
+            self.neighbor.append(grid[self.x_coord][self.y_coord - 1])
+        if grid[self.x_coord][self.y_coord].right != "wall":
+            self.neighbor.append(grid[self.x_coord][self.y_coord + 1])
+        if grid[self.x_coord][self.y_coord].up != "wall":
+            self.neighbor.append(grid[self.x_coord - 1][self.y_coord])
+        if grid[self.x_coord][self.y_coord].down != "wall":
+            self.neighbor.append(grid[self.x_coord + 1][self.y_coord])
+
+        # dir = [(0, -1), (-1, 0), (1, 0), (0, 1)]
         
-        i = 0
-        for dir in dir:
-            nx = self.x_coord + dir[0]
-            ny = self.y_coord + dir[1]
-            check = True
+        # i = 0
+        # for dir in dir:
+        #     nx = self.x_coord + dir[0]
+        #     ny = self.y_coord + dir[1]
+        #     check = True
 
-            if grid[nx][ny] == "wall":
-                check = False
+        #     if grid[nx][ny] == "wall":
+        #         check = False
 
-            if check == True:
-                if i == 0: self.neighbor_action.append(act.Action.LEFT)
-                if i == 1: self.neighbor_action.append(act.Action.UP)
-                if i == 2: self.neighbor_action.append(act.Action.DOWN)
-                if i == 3: self.neighbor_action.append(act.Action.RIGHT)
-                self.neighbor.append(grid[nx][ny])
+        #     if check == True:
+        #         if i == 0: self.neighbor_action.append(act.Action.LEFT)
+        #         if i == 1: self.neighbor_action.append(act.Action.UP)
+        #         if i == 2: self.neighbor_action.append(act.Action.DOWN)
+        #         if i == 3: self.neighbor_action.append(act.Action.RIGHT)
+        #         self.neighbor.append(grid[nx][ny])
             
-            i =  i + 1
+        #     i =  i + 1
 
     def add_or_modify_node (self, x, y, isPit, isWumpus):
         for node in self.knowledge_base:
@@ -117,45 +128,45 @@ class agent():
         self.knowledge_base.append(newNode)
                 
     def addToKB(self, curNode):
-        if curNode.is_breeze and not curNode.is_stench:
+        if curNode.is_breeze() and not curNode.is_stench():
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 1, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 3)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 1, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 1, 3)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 1, 3)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 1, 3)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 1, 3)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 1, 3)
 
-        if curNode.is_stench and not curNode.is_breeze:
+        if curNode.is_stench() and not curNode.is_breeze():
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 3, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 3, 1)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 3, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 3, 1)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 3, 1)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 3, 1)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 3, 1)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 3, 1)
 
-        if curNode.is_stench and curNode.is_breeze:
+        if curNode.is_stench() and curNode.is_breeze():
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 1, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 1)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 1, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 1, 1)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 1, 1)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 1, 1)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 1, 1)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 1, 1)
         
-        if not curNode.is_stench and not curNode.is_breeze:
+        if not curNode.is_stench() and not curNode.is_breeze():
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord - 1, 3, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 3, 3)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_coord, self.y_coord + 1, 3, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 3, 3)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_coord - 1, self.y_coord, 3, 3)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 3, 3)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_coord + 1, self.y_coord, 3, 3)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 3, 3)
 
     def checkWithKB(self, grid):
         self.get_neighbors(grid)

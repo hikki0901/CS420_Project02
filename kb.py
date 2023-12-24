@@ -5,4 +5,7 @@ class knownNode:
         # 0: unknown, 1: maybe, 2: yes, 3: no
         self.isPit = isPit
         self.isWumpus = isWumpus
+
+    def get_pos(self):
+        return self.x, self.y
     
