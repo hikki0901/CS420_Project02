@@ -72,39 +72,39 @@ def main(window, width, height):
                 agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
                 agent.draw_agent(grid,window)
                        
-        keys = pygame.key.get_pressed()
-        pygame.key.set_repeat(0)
+        # keys = pygame.key.get_pressed()
+        # pygame.key.set_repeat(0)
         
-        # Check for key presses and play game manual
-        if keys[pygame.K_a] and not move_left:
-            move_left = True
-            agent.move_agent('a', grid,window)
-        elif not keys[pygame.K_a]:
-            move_left = False
+        # # Check for key presses and play game manual
+        # if keys[pygame.K_a] and not move_left:
+        #     move_left = True
+        #     agent.move_agent('a', grid,window)
+        # elif not keys[pygame.K_a]:
+        #     move_left = False
 
-        if keys[pygame.K_w] and not move_up:
-            move_up = True
-            agent.move_agent('w', grid,window)
-        elif not keys[pygame.K_w]:
-            move_up = False
+        # if keys[pygame.K_w] and not move_up:
+        #     move_up = True
+        #     agent.move_agent('w', grid,window)
+        # elif not keys[pygame.K_w]:
+        #     move_up = False
 
-        if keys[pygame.K_s] and not move_down:
-            move_down = True
-            agent.move_agent('s', grid,window)
-        elif not keys[pygame.K_s]:
-            move_down = False
+        # if keys[pygame.K_s] and not move_down:
+        #     move_down = True
+        #     agent.move_agent('s', grid,window)
+        # elif not keys[pygame.K_s]:
+        #     move_down = False
 
-        if keys[pygame.K_d] and not move_right:
-            move_right = True
-            agent.move_agent('d', grid,window)
-        elif not keys[pygame.K_d]:
-            move_right = False
+        # if keys[pygame.K_d] and not move_right:
+        #     move_right = True
+        #     agent.move_agent('d', grid,window)
+        # elif not keys[pygame.K_d]:
+        #     move_right = False
         
-        if keys[pygame.K_SPACE] and not kill_press:
-            kill_press = True
-            agent.move_agent('space', grid,window)
-        elif not keys[pygame.K_SPACE]:
-            kill_press = False
+        # if keys[pygame.K_SPACE] and not kill_press:
+        #     kill_press = True
+        #     agent.move_agent('space', grid,window)
+        # elif not keys[pygame.K_SPACE]:
+        #     kill_press = False
         
         
         if(not pygame.mouse.get_pressed()[0]) and not one_press:

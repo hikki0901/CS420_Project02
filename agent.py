@@ -157,6 +157,24 @@ class agent():
             if curNode.down != "wall":
                 self.add_or_modify_node(self.x_coord + 1, self.y_coord, 3, 3)
 
+    def checkWithKB(self, grid):
+        self.get_neighbors(grid)
+        tmpNeighbor = []
+
+        for neighbor in self.neighbor:
+            remove_node = False
+
+            for node in self.knowledge_base:
+                if node.x == neighbor.x and node.y == neighbor.y:
+                    if node.isPit == 2 or node.isWumpus == 2:
+                        remove_node = True
+                        break 
+
+            if not remove_node:
+                tmpNeighbor.append(neighbor)
+
+        self.neighbor = tmpNeighbor
+
     def move_agent(self, key,grid,window):
         current_x = self.x_coord
         current_y = self.y_coord
