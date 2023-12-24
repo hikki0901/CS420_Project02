@@ -25,7 +25,7 @@ PINK = (255, 105, 180)
 
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Move your step")
-font = pygame.font.Font('dlxfont.ttf', 18)
+font = pygame.font.Font('dlxfont.ttf', 14)
 tile_font = pygame.font.Font('dlxfont.ttf', 12)
 Error_area = pygame.Rect(WIDTH // 4-50, HEIGHT//2 -35, 350, 120)
 game_area = pygame.Rect(0,100,WIDTH,HEIGHT-100) 

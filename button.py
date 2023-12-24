@@ -11,12 +11,12 @@ class Button:
         
     def draw(self):
         text_button = init.font.render(self.text, True, init.BLACK)
-        button = pygame.rect.Rect((self.x, self.y), (160, 50))
+        button = pygame.rect.Rect((self.x, self.y), (120, 50))
         if self.click:
             pygame.draw.rect(init.WINDOW, init.GREEN, button, 0,5)
         else:
             pygame.draw.rect(init.WINDOW, init.IRISBLUE, button, 0,5)
-        init.WINDOW.blit(text_button,(self.x +20, self.y + 15))
+        init.WINDOW.blit(text_button,(self.x + 10, self.y + 15))
     
     def is_click(self) -> bool:
         mouse = pygame.mouse.get_pos()

@@ -17,6 +17,7 @@ def main(window, width, height):
     agent_lib.setWall(grid, size)
     agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
     click4 = False
+    click3 = False
     one_press = True
     
     move_left = False
@@ -59,6 +60,7 @@ def main(window, width, height):
             new_game = False
 
         restart = btn.Button(30, 25, "Restart", click4)
+        run = btn.Button(190, 25, "Run", click3)
         drawer.draw_update(window,grid,size,width,height)     
         
         if(pygame.mouse.get_pressed()[0]) and one_press:
@@ -72,9 +74,22 @@ def main(window, width, height):
                 agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
                 agent_lib.setWall(grid, size)
                 agent.draw_agent(grid,window)
+
+            if(run.is_click()):
+                click3 = True
+                agent.addToKB(grid[agent.x_coord][agent.y_coord]) 
+                print ("Knowledge base: ")
+                for node in agent.knowledge_base:
+                    print (node.get_pos(), node.isPit, node.isWumpus)
+                agent.get_neighbors(grid)
+                print ("neighbor: ")
+                for node in agent.neighbor:
+                    print (node.get_pos())
+                
+                
                        
-        keys = pygame.key.get_pressed()
-        pygame.key.set_repeat(0)
+        # keys = pygame.key.get_pressed()
+        # pygame.key.set_repeat(0)
         
         # # Check for key presses and play game manual
         # if keys[pygame.K_a] and not move_left:
@@ -106,20 +121,11 @@ def main(window, width, height):
         #     agent.move_agent('space', grid,window)
         # elif not keys[pygame.K_SPACE]:
         #     kill_press = False
-
-        if keys[pygame.K_q]:
-            agent.addToKB(grid[agent.x_coord][agent.y_coord]) 
-            print ("Knowledge base: ")
-            for node in agent.knowledge_base:
-                print (node.get_pos(), node.isPit, node.isWumpus)
-            agent.get_neighbors(grid)
-            print ("neighbor: ")
-            for node in agent.neighbor:
-                print (node.get_pos())
         
         if(not pygame.mouse.get_pressed()[0]) and not one_press:
             one_press = True
             click4 = False
+            click3 = False
             restart.remove_click()
             restart.draw()
              
