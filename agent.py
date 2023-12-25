@@ -125,7 +125,7 @@ class agent():
             
         #     i =  i + 1
 
-    def add_or_modify_node (self, x, y, isPit, isWumpus):
+    def add_or_modify_node (self, x, y, isPit, isWumpus, isBreeze, isStench):
         for node in self.knowledge_base:
             if node.x == x and node.y == y:
                 if node.countVisit > 0:
@@ -140,51 +140,56 @@ class agent():
                 else:
                     if node.isWumpus < 2 :
                         node.isWumpus += isWumpus
+                node.isBreeze = isBreeze
+                node.isStench = isStench
                 return
         newNode = knownNode(x, y, isPit, isWumpus)
         self.knowledge_base.append(newNode)
                 
     def addToKB(self, curNode):
-        self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3)
         if curNode.is_breeze() and not curNode.is_stench():
+            self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3, 1, 0)
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 3, -1, -1)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 1, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 1, 3, -1, -1)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 1, 3)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 1, 3, -1, -1)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 1, 3)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 1, 3, -1, -1)
 
         if curNode.is_stench() and not curNode.is_breeze():
+            self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3, 0, 1)
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 3, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 3, 1, -1, -1)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 3, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 3, 1, -1, -1)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 3, 1)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 3, 1, -1, -1)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 3, 1)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 3, 1, -1, -1)
 
         if curNode.is_stench() and curNode.is_breeze():
+            self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3, 1, 1)
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 1, -1, -1)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 1, 1)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 1, 1, -1, -1)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 1, 1)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 1, 1, -1, -1)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 1, 1)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 1, 1, -1, -1)
         
         if not curNode.is_stench() and not curNode.is_breeze():
+            self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3, 0, 0)
             if curNode.left != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 3, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb - 1, 3, 3, -1, -1)
             if curNode.right != "wall":
-                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 3, 3)
+                self.add_or_modify_node(self.x_kb, self.y_kb + 1, 3, 3, -1, -1)
             if curNode.up != "wall":
-                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 3, 3)
+                self.add_or_modify_node(self.x_kb - 1, self.y_kb, 3, 3, -1, -1)
             if curNode.down != "wall":
-                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 3, 3)
+                self.add_or_modify_node(self.x_kb + 1, self.y_kb, 3, 3, -1, -1)
 
     def checkWithKB(self, grid):
         self.get_neighbors(grid)
@@ -284,6 +289,30 @@ class agent():
             neighbor.countVisit += 1
             self.has_move = True
         else: self.has_move = False
+
+    
+    def check_enclosed(self):
+        extreme_upper = []
+        extreme_lower = []
+
+        max_col, min_col = float('-inf'), float('inf')
+        for node in self.knowledge_base:
+            max_col = max(max_col, node.y)
+            min_col = min(min_col, node.y)
+        
+
+        for i in range(min_col, max_col):
+            max_row, min_row = float('-inf'), float('inf')
+            for node in self.knowledge_base:
+                if node.y == i:
+                    max_row = max(max_row, node.x)
+                    min_row = min(min_row, node.x)
+            extreme_upper.append(max_row)
+            extreme_lower.append(min_row)
+
+        if len(extreme_lower) == len(extreme_upper):
+            return True
+        return False
 
     def move (self, grid, window):
         if self.has_move:
