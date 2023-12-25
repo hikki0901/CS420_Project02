@@ -78,18 +78,31 @@ class agent():
         self.knowledge_base = []
         self.x_kb = 0
         self.y_kb = 0
-    
+
     def get_neighbors(self, grid):
         self.neighbor = []
+        tmpMove = []
+        
         if grid[self.x_coord][self.y_coord].left != "wall":
-            self.neighbor.append(grid[self.x_coord][self.y_coord - 1])
+            node = knownNode(0,0,0,0)
+            self.neighbor.append(node)
+            tmpMove.append([0,-1])
         if grid[self.x_coord][self.y_coord].right != "wall":
-            self.neighbor.append(grid[self.x_coord][self.y_coord + 1])
+            node = knownNode(0,0,0,0)
+            self.neighbor.append(node)
+            tmpMove.append([0, 1])
         if grid[self.x_coord][self.y_coord].up != "wall":
-            self.neighbor.append(grid[self.x_coord - 1][self.y_coord])
+            node = knownNode(0,0,0,0)
+            self.neighbor.append(node)
+            tmpMove.append([-1, 0])
         if grid[self.x_coord][self.y_coord].down != "wall":
-            self.neighbor.append(grid[self.x_coord + 1][self.y_coord])
+            node = knownNode(0,0,0,0)
+            self.neighbor.append(node)
+            tmpMove.append([1, 0])
 
+        for i in range(len(self.neighbor)):
+            self.neighbor[i].x = self.x_kb + tmpMove[i][0]
+            self.neighbor[i].y = self.y_kb + tmpMove[i][1]
         # dir = [(0, -1), (-1, 0), (1, 0), (0, 1)]
         
         # i = 0
@@ -128,6 +141,7 @@ class agent():
         self.knowledge_base.append(newNode)
                 
     def addToKB(self, curNode):
+        self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3)
         if curNode.is_breeze() and not curNode.is_stench():
             if curNode.left != "wall":
                 self.add_or_modify_node(self.x_kb, self.y_kb - 1, 1, 3)
@@ -180,6 +194,10 @@ class agent():
                     if node.isPit == 2 or node.isWumpus == 2:
                         remove_node = True
                         break 
+                    else:
+                        neighbor.isWumpus = node.isWumpus
+                        neighbor.isPit = node.isPit
+                        neighbor.countVisit = node.countVisit
 
             if not remove_node:
                 tmpNeighbor.append(neighbor)
@@ -193,6 +211,7 @@ class agent():
             if(self.current_direction == act.Action.UP):
                 if(0 < self.x_coord):
                     self.x_coord -= 1
+                    self.x_kb -= 1
                     self.points -= 10
             self.current_direction = act.Action.UP
         
@@ -200,6 +219,7 @@ class agent():
             if(self.current_direction == act.Action.DOWN):
                 if(self.x_coord < self.size - 1):
                     self.x_coord +=1
+                    self.x_kb += 1
                     self.points -= 10
             self.current_direction = act.Action.DOWN
         
@@ -207,6 +227,7 @@ class agent():
             if(self.current_direction == act.Action.LEFT):
                 if(0 < self.y_coord):
                     self.y_coord -=1
+                    self.y_kb -= 1
                     self.points -=10
             self.current_direction = act.Action.LEFT
         
@@ -214,6 +235,7 @@ class agent():
             if(self.current_direction == act.Action.RIGHT):
                 if( self.y_coord < self.size -1):
                     self.y_coord +=1
+                    self.y_kb += 1
                     self.points -= 10
             self.current_direction = act.Action.RIGHT
         
@@ -239,10 +261,62 @@ class agent():
                     
                     grid = generate_factor_inputfile(grid,self.size)       
                     
-        print(self.x_coord,self.y_coord)       
+        # print(self.x_coord,self.y_coord)       
         
         self.update_previous_node(grid,current_x,current_y,window) 
         self.draw_agent(grid,window)   
+    
+    def move_to (self, neighbor, grid, window):
+        tmp = self.current_direction
+        if tmp == act.Action.RIGHT:
+            if neighbor.x - self.x_kb == -1:
+                self.move_agent("w", grid, window)
+                self.move_agent("w", grid, window)         
+            if neighbor.x - self.x_kb == 1:
+                self.move_agent("s", grid, window)
+                self.move_agent("s", grid, window)     
+            if neighbor.y - self.y_kb == -1:
+                self.move_agent("a", grid, window)
+                self.move_agent("a", grid, window)            
+            if neighbor.y - self.y_kb == 1:
+                self.move_agent("d", grid, window)
+        elif tmp == act.Action.LEFT:
+            if neighbor.x - self.x_kb == -1:
+                self.move_agent("w", grid, window)
+                self.move_agent("w", grid, window)         
+            if neighbor.x - self.x_kb == 1:
+                self.move_agent("s", grid, window)
+                self.move_agent("s", grid, window)      
+            if neighbor.y - self.y_kb == -1:
+                self.move_agent("a", grid, window)        
+            if neighbor.y - self.y_kb == 1:
+                self.move_agent("d", grid, window)
+                self.move_agent("d", grid, window)
+        elif tmp == act.Action.UP:
+            if neighbor.x - self.x_kb == -1:
+                self.move_agent("w", grid, window)
+            if neighbor.x - self.x_kb == 1:
+                self.move_agent("s", grid, window)
+                self.move_agent("s", grid, window)      
+            if neighbor.y - self.y_kb == -1:
+                self.move_agent("a", grid, window)
+                self.move_agent("a", grid, window)              
+            if neighbor.y - self.y_kb == 1:
+                self.move_agent("d", grid, window)
+                self.move_agent("d", grid, window)
+        elif tmp == act.Action.DOWN:
+            if neighbor.x - self.x_kb == -1:
+                self.move_agent("w", grid, window)
+                self.move_agent("w", grid, window)
+            if neighbor.x - self.x_kb == 1:
+                self.move_agent("s", grid, window)      
+            if neighbor.y - self.y_kb == -1:
+                self.move_agent("a", grid, window)
+                self.move_agent("a", grid, window)              
+            if neighbor.y - self.y_kb == 1:
+                self.move_agent("d", grid, window)
+                self.move_agent("d", grid, window)
+        neighbor.countVisit += 1
 
     # # reload map after kill wumpus
     # def reload_map(self,grid):

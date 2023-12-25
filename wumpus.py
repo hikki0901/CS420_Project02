@@ -78,13 +78,18 @@ def main(window, width, height):
             if(run.is_click()):
                 click3 = True
                 agent.addToKB(grid[agent.x_coord][agent.y_coord]) 
-                print ("Knowledge base: ")
-                for node in agent.knowledge_base:
-                    print (node.get_pos(), node.isPit, node.isWumpus)
-                agent.get_neighbors(grid)
+                # print ("Knowledge base: ")
+                # for node in agent.knowledge_base:
+                #     print (node.x, node.y, node.isPit, node.isWumpus)
+                agent.checkWithKB(grid)
                 print ("neighbor: ")
                 for node in agent.neighbor:
-                    print (node.get_pos())
+                    print (node.x, node.y, node.countVisit)
+                leastVisited = min(agent.neighbor, key=lambda x: x.countVisit)
+                print(leastVisited.countVisit)
+                for node in agent.knowledge_base:
+                    if node.x == leastVisited.x and node.y == leastVisited.y:
+                        agent.move_to(node, grid, window)
                 
                 
                        
