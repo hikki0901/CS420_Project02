@@ -77,18 +77,7 @@ def main(window, width, height):
 
             if(run.is_click()):
                 click3 = True
-                if agent.has_move:
-                    agent.addToKB(grid[agent.x_coord][agent.y_coord]) 
-                agent.checkWithKB(grid)
-                if len(agent.neighbor) != 0:
-                    print ("neighbor: ")
-                    for node in agent.neighbor:
-                        print (node.x, node.y, node.countVisit)
-                    leastVisited = min(agent.neighbor, key=lambda x: x.countVisit)
-                    print(leastVisited.countVisit)
-                    for node in agent.knowledge_base:
-                        if node.x == leastVisited.x and node.y == leastVisited.y:
-                            agent.move_to(node, grid, window)
+                agent.move(grid, window)
                 
                 
         # keys = pygame.key.get_pressed()

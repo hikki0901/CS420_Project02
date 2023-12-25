@@ -127,6 +127,8 @@ class agent():
     def add_or_modify_node (self, x, y, isPit, isWumpus):
         for node in self.knowledge_base:
             if node.x == x and node.y == y:
+                if node.countVisit > 0:
+                    if node.isWumpus == isWumpus and node.isPit == isPit and node.x == self.x_kb and node.y == self.y_kb: return
                 if isPit == 3:
                     node.isPit = isPit
                 else:
@@ -281,6 +283,23 @@ class agent():
             neighbor.countVisit += 1
             self.has_move = True
         else: self.has_move = False
+
+    def move (self, grid, window):
+        if self.has_move:
+            self.addToKB(grid[self.x_coord][self.y_coord]) 
+        self.checkWithKB(grid)
+        if len(self.neighbor) != 0:
+            print ("neighbor: ")
+            for node in self.neighbor:
+                print (node.x, node.y, node.countVisit)
+            filtered_neighbor = [node for node in self.neighbor if node.isPit == 3 and node.isWumpus == 3]
+            if len(filtered_neighbor) > 0:
+                self.neighbor = filtered_neighbor
+            leastVisited = min(self.neighbor, key=lambda x: x.countVisit)
+            print(leastVisited.countVisit)
+            for node in self.knowledge_base:
+                if node.x == leastVisited.x and node.y == leastVisited.y:
+                    self.move_to(node, grid, window)
 
     # # reload map after kill wumpus
     # def reload_map(self,grid):
