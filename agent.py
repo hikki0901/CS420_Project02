@@ -79,6 +79,7 @@ class agent():
         self.x_kb = 0
         self.y_kb = 0
         self.has_move = True
+        self.killing_wumpus = False
 
     def get_neighbors(self, grid):
         self.neighbor = []
@@ -300,6 +301,35 @@ class agent():
             for node in self.knowledge_base:
                 if node.x == leastVisited.x and node.y == leastVisited.y:
                     self.move_to(node, grid, window)
+
+    def check_wumpus(self, grid, node):
+        tmpNode = grid[node.x + self.x_coord][node.y + self.y_coord]
+        if tmpNode == "W":
+            self.add_or_modify_node(self, node.x, node.y, 3, 3)
+        return None
+
+    def kill_wumpus(self):
+        self.killing_wumpus = True
+        if self.current_direction == act.Action.LEFT:
+            for tmp_neigh in self.neighbor:
+                if tmp_neigh.x_kb == self.x_kb and tmp_neigh.y_kb == self.y_kb - 1:
+                    return tmp_neigh
+            return None
+        elif self.current_direction == act.Action.UP:
+            for tmp_neigh in self.neighbor:
+                if tmp_neigh.x_kb == self.x_kb - 1 and tmp_neigh.y_kb == self.y_kb:
+                    return tmp_neigh
+            return None
+        elif self.current_direction == act.Action.DOWN:
+            for tmp_neigh in self.neighbor:
+                if tmp_neigh.x_kb == self.x_kb + 1 and tmp_neigh.y_kb == self.y_kb:
+                    return tmp_neigh
+            return None
+        elif self.current_direction == act.Action.RIGHT:
+            for tmp_neigh in self.neighbor:
+                if tmp_neigh.x_kb == self.x_kb and tmp_neigh.y_kb == self.y_kb + 1:
+                    return tmp_neigh
+            return None
 
     # # reload map after kill wumpus
     # def reload_map(self,grid):
