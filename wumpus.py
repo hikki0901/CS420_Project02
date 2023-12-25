@@ -60,7 +60,7 @@ def main(window, width, height):
             new_game = False
 
         restart = btn.Button(30, 25, "Restart", click4)
-        run = btn.Button(190, 25, "Run", click3)
+        run = btn.Button(190, 25, "Step", click3)
         drawer.draw_update(window,grid,size,width,height)     
         
         if(pygame.mouse.get_pressed()[0]) and one_press:
