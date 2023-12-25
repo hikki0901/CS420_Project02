@@ -68,6 +68,8 @@ class agent():
     def __init__(self,x,y,size) -> None:
         self.current_direction = act.Action.RIGHT
         self.is_alive = True
+        self.x_og = x
+        self.y_og = y
         self.x_coord = x
         self.y_coord = y
         self.size = size
@@ -332,7 +334,7 @@ class agent():
                     self.move_to(node, grid, window)
 
     def check_wumpus(self, grid, node):
-        tmpNode = grid[node.x + self.x_coord][node.y + self.y_coord]
+        tmpNode = grid[node.x + self.x_og][node.y + self.y_og]
         if tmpNode == "W":
             self.add_or_modify_node(self, node.x, node.y, 3, 3)
         return None
