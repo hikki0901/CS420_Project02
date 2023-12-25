@@ -78,6 +78,7 @@ class agent():
         self.knowledge_base = []
         self.x_kb = 0
         self.y_kb = 0
+        self.has_move = True
 
     def get_neighbors(self, grid):
         self.neighbor = []
@@ -267,56 +268,19 @@ class agent():
         self.draw_agent(grid,window)   
     
     def move_to (self, neighbor, grid, window):
-        tmp = self.current_direction
-        if tmp == act.Action.RIGHT:
-            if neighbor.x - self.x_kb == -1:
-                self.move_agent("w", grid, window)
-                self.move_agent("w", grid, window)         
-            if neighbor.x - self.x_kb == 1:
-                self.move_agent("s", grid, window)
-                self.move_agent("s", grid, window)     
-            if neighbor.y - self.y_kb == -1:
-                self.move_agent("a", grid, window)
-                self.move_agent("a", grid, window)            
-            if neighbor.y - self.y_kb == 1:
-                self.move_agent("d", grid, window)
-        elif tmp == act.Action.LEFT:
-            if neighbor.x - self.x_kb == -1:
-                self.move_agent("w", grid, window)
-                self.move_agent("w", grid, window)         
-            if neighbor.x - self.x_kb == 1:
-                self.move_agent("s", grid, window)
-                self.move_agent("s", grid, window)      
-            if neighbor.y - self.y_kb == -1:
-                self.move_agent("a", grid, window)        
-            if neighbor.y - self.y_kb == 1:
-                self.move_agent("d", grid, window)
-                self.move_agent("d", grid, window)
-        elif tmp == act.Action.UP:
-            if neighbor.x - self.x_kb == -1:
-                self.move_agent("w", grid, window)
-            if neighbor.x - self.x_kb == 1:
-                self.move_agent("s", grid, window)
-                self.move_agent("s", grid, window)      
-            if neighbor.y - self.y_kb == -1:
-                self.move_agent("a", grid, window)
-                self.move_agent("a", grid, window)              
-            if neighbor.y - self.y_kb == 1:
-                self.move_agent("d", grid, window)
-                self.move_agent("d", grid, window)
-        elif tmp == act.Action.DOWN:
-            if neighbor.x - self.x_kb == -1:
-                self.move_agent("w", grid, window)
-                self.move_agent("w", grid, window)
-            if neighbor.x - self.x_kb == 1:
-                self.move_agent("s", grid, window)      
-            if neighbor.y - self.y_kb == -1:
-                self.move_agent("a", grid, window)
-                self.move_agent("a", grid, window)              
-            if neighbor.y - self.y_kb == 1:
-                self.move_agent("d", grid, window)
-                self.move_agent("d", grid, window)
-        neighbor.countVisit += 1
+        x, y = self.x_kb, self.y_kb
+        if neighbor.x - self.x_kb == -1:
+            self.move_agent("w", grid, window) 
+        if neighbor.x - self.x_kb == 1:
+            self.move_agent("s", grid, window)
+        if neighbor.y - self.y_kb == -1:
+            self.move_agent("a", grid, window)          
+        if neighbor.y - self.y_kb == 1:
+            self.move_agent("d", grid, window)
+        if self.x_kb != x or self.y_kb != y:
+            neighbor.countVisit += 1
+            self.has_move = True
+        else: self.has_move = False
 
     # # reload map after kill wumpus
     # def reload_map(self,grid):
