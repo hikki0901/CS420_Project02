@@ -371,7 +371,7 @@ class agent():
             self.has_shoot = True
             return
         
-    def shoot(self, grid, direction): 
+    def shoot_extra(self, grid, direction): 
         if direction == "right":
             self.current_direction == act.Action.RIGHT
         if direction == "left":
