@@ -371,11 +371,22 @@ class agent():
             self.has_shoot = True
             return
         
-
+    def shoot(self, grid, direction): 
+        if direction == "right":
+            self.current_direction == act.Action.RIGHT
+        if direction == "left":
+            self.current_direction == act.Action.LEFT
+        if direction == "up":
+            self.current_direction == act.Action.UP
+        if direction == "down":
+            self.current_direction == act.Action.DOWN
+        shot_cell = self.kill_wumpus()
+        self.check_wumpus(grid, shot_cell)
 
     def check_wumpus(self, grid, node):
         tmpNode = grid[node.x + self.x_og][node.y + self.y_og]
         if tmpNode == "W":
+            print("Scream")
             self.add_or_modify_node(self, node.x, node.y, 3, 3)
         return None
 
