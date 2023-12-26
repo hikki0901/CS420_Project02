@@ -370,7 +370,7 @@ class agent():
         font_top = pygame.font.Font('dlxfont.ttf', 14)
         points_surface = font_top.render("Points: " + str(self.points), True, init.PINK)
         points_rect = points_surface.get_rect()
-        points_rect.center = 400, 100//2
+        points_rect.center = 400, 100//4
         
         init.WINDOW.fill(init.WHITE, points_rect)
         

@@ -61,8 +61,8 @@ def main(window, width, height):
             agent.draw_agent(grid,window)
             new_game = False
 
-        restart = btn.Button(10, 25, "Restart", click4)
-        run = btn.Button(150, 25, "Step", click3)
+        restart = btn.Button(10, 5, "Restart", click4)
+        run = btn.Button(150, 5, "Step", click3)
         drawer.draw_update(window,grid,size,width,height)     
         
         if(pygame.mouse.get_pressed()[0]) and one_press:
