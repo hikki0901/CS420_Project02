@@ -53,8 +53,10 @@ def main(window, width, height):
             
             if(agent.check_win):
                 agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
+                agent_lib.setWall(grid, size)
             else:
                 agent = agent_lib.previous_agent(size,grid,x_agent,y_agent)
+                agent_lib.setWall(grid, size)
             
             agent.draw_agent(grid,window)
             new_game = False

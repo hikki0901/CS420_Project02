@@ -81,6 +81,7 @@ class agent():
         self.x_kb = 0
         self.y_kb = 0
         self.has_move = True
+        self.has_shoot = False
         self.killing_wumpus = False
 
     def get_neighbors(self, grid):
@@ -103,10 +104,18 @@ class agent():
             node = knownNode(0,0,0,0)
             self.neighbor.append(node)
             tmpMove.append([1, 0])
-
+        print ("KB_Neighbor")
         for i in range(len(self.neighbor)):
             self.neighbor[i].x = self.x_kb + tmpMove[i][0]
             self.neighbor[i].y = self.y_kb + tmpMove[i][1]
+            for node in self.knowledge_base:
+                if node.x == self.neighbor[i].x and node.y == self.neighbor[i].y:
+                    print (node.x, node.y,"visit: ", node.countVisit,"is wumpus: ", node.isWumpus,"isPit: ", node.isPit)
+                    self.neighbor[i].isPit = node.isPit
+                    self.neighbor[i].isWumpus = node.isWumpus
+                    self.neighbor[i].isBreeze = node.isBreeze
+                    self.neighbor[i].isStench = node.isStench
+
         # dir = [(0, -1), (-1, 0), (1, 0), (0, 1)]
         
         # i = 0
@@ -131,7 +140,7 @@ class agent():
         for node in self.knowledge_base:
             if node.x == x and node.y == y:
                 if node.countVisit > 0:
-                    if node.isWumpus == isWumpus and node.isPit == isPit and node.x == self.x_kb and node.y == self.y_kb: return
+                    if node.isWumpus == isWumpus and node.isPit == isPit: return
                 if isPit == 3:
                     node.isPit = isPit
                 else:
@@ -202,7 +211,7 @@ class agent():
 
             for node in self.knowledge_base:
                 if node.x == neighbor.x and node.y == neighbor.y:
-                    if node.isPit == 2 or node.isWumpus == 2:
+                    if node.isPit == 2:
                         remove_node = True
                         break 
                     else:
@@ -320,18 +329,48 @@ class agent():
         if self.has_move:
             self.addToKB(grid[self.x_coord][self.y_coord]) 
         self.checkWithKB(grid)
-        if len(self.neighbor) != 0:
+        if len(self.neighbor) != 0: 
             print ("neighbor: ")
             for node in self.neighbor:
-                print (node.x, node.y, node.countVisit)
-            filtered_neighbor = [node for node in self.neighbor if node.isPit == 3 and node.isWumpus == 3]
+                print (node.x, node.y,"visit: ", node.countVisit,"is wumpus: ", node.isWumpus,"isPit: ", node.isPit)
+            for node in self.neighbor:
+                if node.isWumpus == 2 and not self.has_shoot:
+                    self.shoot(node, grid, window)
+                    self.has_shoot = True
+                    return
+            filtered_neighbor = [node for node in self.neighbor if node.isPit == 3]
             if len(filtered_neighbor) > 0:
                 self.neighbor = filtered_neighbor
             leastVisited = min(self.neighbor, key=lambda x: x.countVisit)
-            print(leastVisited.countVisit)
+            print("least visited: ",leastVisited.countVisit)
             for node in self.knowledge_base:
                 if node.x == leastVisited.x and node.y == leastVisited.y:
                     self.move_to(node, grid, window)
+
+    def shoot(self, neighbor, grid, window):
+        x, y = self.x_kb, self.y_kb
+        if neighbor.x - self.x_kb == -1 and self.current_direction != act.Action.UP:
+            self.move_agent("w", grid, window) 
+            self.has_shoot = False
+            return
+        if neighbor.x - self.x_kb == 1 and self.current_direction != act.Action.DOWN:
+            self.move_agent("s", grid, window)
+            self.has_shoot = False
+            return
+        if neighbor.y - self.y_kb == -1 and self.current_direction != act.Action.LEFT:
+            self.move_agent("a", grid, window)      
+            self.has_shoot = False
+            return    
+        if neighbor.y - self.y_kb == 1 and self.current_direction != act.Action.RIGHT:
+            self.move_agent("d", grid, window)
+            self.has_shoot = False
+            return
+        else:
+            self.move_agent("space", grid, window)
+            self.has_shoot = True
+            return
+        
+
 
     def check_wumpus(self, grid, node):
         tmpNode = grid[node.x + self.x_og][node.y + self.y_og]
