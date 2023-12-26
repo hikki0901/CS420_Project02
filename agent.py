@@ -92,6 +92,10 @@ class agent():
             node = knownNode(0,0,0,0,0,0)
             self.neighbor.append(node)
             tmpMove.append([0,-1])
+        if grid[self.x_coord][self.y_coord].down != "wall":
+            node = knownNode(0,0,0,0,0,0)
+            self.neighbor.append(node)
+            tmpMove.append([1, 0])
         if grid[self.x_coord][self.y_coord].right != "wall":
             node = knownNode(0,0,0,0,0,0)
             self.neighbor.append(node)
@@ -100,10 +104,7 @@ class agent():
             node = knownNode(0,0,0,0,0,0)
             self.neighbor.append(node)
             tmpMove.append([-1, 0])
-        if grid[self.x_coord][self.y_coord].down != "wall":
-            node = knownNode(0,0,0,0,0,0)
-            self.neighbor.append(node)
-            tmpMove.append([1, 0])
+        
 
         for i in range(len(self.neighbor)):
             self.neighbor[i].x = self.x_kb + tmpMove[i][0]
@@ -155,6 +156,8 @@ class agent():
                         node.isWumpus += isWumpus
                 node.isBreeze = isBreeze
                 node.isStench = isStench
+                node.x_knowledge = x_knowledge
+                node.y_knowledge = y_knowledge
                 return
         newNode = knownNode(x, y, isPit, isWumpus, x_knowledge, y_knowledge)
         self.knowledge_base.append(newNode)
@@ -332,13 +335,11 @@ class agent():
         return False
 
     def move (self, grid, window):
-        tmpNode = None
         if self.has_move or self.has_shoot:
             self.addToKB(grid[self.x_coord][self.y_coord]) 
             self.has_shoot = False
         self.checkWithKB(grid)
         if len(self.neighbor) != 0: 
-            print ("neighbor: ")
             count = 0
             countBreeze = 0
             countUnvisited = 0
@@ -353,13 +354,11 @@ class agent():
             if count == len(self.neighbor) and countBreeze != 0:
                 for node in self.neighbor:
                     if node.countVisit == 0:
-                        tmpNode = node
                         self.shoot(node, grid, window)
                         return
             else:
                 for node in self.neighbor:
                     if node.isWumpus == 2 and not self.has_shoot:
-                        tmpNode = node
                         self.shoot(node, grid, window)
                         return
 
