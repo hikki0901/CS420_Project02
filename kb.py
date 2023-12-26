@@ -1,5 +1,5 @@
 class knownNode:
-    def __init__(self, x, y, isPit, isWumpus):
+    def __init__(self, x, y, isPit, isWumpus, x_knowledge, y_knowledge):
         self.x = x
         self.y = y
         self.countVisit = 0
@@ -10,6 +10,10 @@ class knownNode:
         # 0: false, 1: true, -1: unknown
         self.isBreeze = -1
         self.isStench = -1
+
+        # position to gain knowledge from
+        self.x_knowledge = x_knowledge
+        self.y_knowledge = y_knowledge
     
     # def get_pos(self):
     #     return self.x, self.y
