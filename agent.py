@@ -144,12 +144,12 @@ class agent():
                 if isPit == 3:
                     node.isPit = isPit
                 else:
-                    if node.isPit < 2 :
+                    if node.isPit < 2:
                         node.isPit += isPit
                 if isWumpus == 3:
                     node.isWumpus = isWumpus
                 else:
-                    if node.isWumpus < 2 :
+                    if node.isWumpus < 2:
                         node.isWumpus += isWumpus
                 node.isBreeze = isBreeze
                 node.isStench = isStench
@@ -266,6 +266,7 @@ class agent():
             temp_y = self.y_coord + action_coord[self.current_direction.value][1]
             if( 0 <= temp_x < self.size and 0 <= temp_y < self.size):
                 if(grid[temp_x][temp_y].check_wumpus == True):
+                    print("SCREAM!!!")
                     grid[temp_x][temp_y].check_wumpus = False
                     grid[temp_x][temp_y].text = ""
                     grid[temp_x][temp_y].image = pygame.image.load('./assets/terrain.png')
