@@ -340,27 +340,10 @@ class agent():
             self.has_shoot = False
         self.checkWithKB(grid)
         if len(self.neighbor) != 0: 
-            count = 0
-            countBreeze = 0
-            countUnvisited = 0
             for node in self.neighbor:
-                if node.isBreeze == 1 or node.countVisit == 0:
-                    count += 1
-                if node.isBreeze == 1:
-                    countBreeze += 1
-                if node.countVisit == 0:
-                    countUnvisited += 1
-
-            if count == len(self.neighbor) and countBreeze != 0:
-                for node in self.neighbor:
-                    if node.countVisit == 0:
-                        self.shoot(node, grid, window)
-                        return
-            else:
-                for node in self.neighbor:
-                    if node.isWumpus == 2 and not self.has_shoot:
-                        self.shoot(node, grid, window)
-                        return
+                if node.isWumpus == 2 and not self.has_shoot:
+                    self.shoot(node, grid, window)
+                    return
 
             filtered_neighbor = [node for node in self.neighbor if node.isPit == 3 and node.isWumpus != 1]
             if len(filtered_neighbor) > 0:
