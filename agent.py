@@ -454,6 +454,7 @@ class agent():
         grid[self.x_coord][self.y_coord].draw(window)
     
     def draw_points(self):
+        pygame.draw.rect(init.WINDOW, init.WHITE, init.point_area)
         font_top = pygame.font.Font('dlxfont.ttf', 14)
         points_surface = font_top.render("Points: " + str(self.points), True, init.PINK)
         points_rect = points_surface.get_rect()
@@ -465,4 +466,4 @@ class agent():
         init.WINDOW.blit(points_surface, points_rect)
 
         # Update the display only in the region where the points are
-        pygame.display.flip()
+        pygame.display.update()

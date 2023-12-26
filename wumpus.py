@@ -61,8 +61,8 @@ def main(window, width, height):
             agent.draw_agent(grid,window)
             new_game = False
 
-        restart = btn.Button(30, 25, "Restart", click4)
-        run = btn.Button(190, 25, "Step", click3)
+        restart = btn.Button(10, 25, "Restart", click4)
+        run = btn.Button(150, 25, "Step", click3)
         drawer.draw_update(window,grid,size,width,height)     
         
         if(pygame.mouse.get_pressed()[0]) and one_press:
@@ -79,7 +79,12 @@ def main(window, width, height):
 
             if(run.is_click()):
                 click3 = True
-                agent.move(grid, window)
+                while(agent.check_win == False and agent.is_alive == True):
+                    agent.move(grid, window)
+                    pygame.draw.rect(window, init.WHITE, init.game_area)
+                    drawer.draw_update(window,grid,size,width,height)    
+                    pygame.time.delay(500)
+                    
                 
                 
         # keys = pygame.key.get_pressed()
