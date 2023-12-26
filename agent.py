@@ -210,68 +210,79 @@ class agent():
         self.neighbor = tmpNeighbor
 
     def move_agent(self, key,grid,window):
+        Message = ""
         current_x = self.x_coord
         current_y = self.y_coord
         if key == "w":
             if(self.current_direction == act.Action.UP):
+                Message = "GO UP"
                 if(0 < self.x_coord):
                     self.x_coord -= 1
                     self.x_kb -= 1
                     self.points -= 10
+            else: Message = "LOOK UP"
             self.current_direction = act.Action.UP
         
-        if key == "s":
+        elif key == "s":
             if(self.current_direction == act.Action.DOWN):
+                Message = "GO DOWN"
                 if(self.x_coord < self.size - 1):
                     self.x_coord +=1
                     self.x_kb += 1
                     self.points -= 10
+            else: Message = "LOOK DOWN"
             self.current_direction = act.Action.DOWN
         
-        if key == "a":
+        elif key == "a":
             if(self.current_direction == act.Action.LEFT):
+                Message = "GO LEFT"
                 if(0 < self.y_coord):
                     self.y_coord -=1
                     self.y_kb -= 1
                     self.points -=10
+            else: Message = "LOOK LEFT"
             self.current_direction = act.Action.LEFT
         
-        if key == "d":
+        elif key == "d":
             if(self.current_direction == act.Action.RIGHT):
+                Message = "GO RIGHT"
                 if( self.y_coord < self.size -1):
                     self.y_coord +=1
                     self.y_kb += 1
                     self.points -= 10
+            else: Message = "LOOK RIGHT"
             self.current_direction = act.Action.RIGHT
-        
-        if key == "space":
-            self.points -= 100
-            action_coord= [(0,0), (0,-1), (-1,0), (1,0), (0,1)]
-            temp_x = self.x_coord + action_coord[self.current_direction.value][0]
-            temp_y = self.y_coord + action_coord[self.current_direction.value][1]
-            wumpus_kb_x = self.x_kb + action_coord[self.current_direction.value][0]
-            wumpus_kb_y = self.y_kb + action_coord[self.current_direction.value][1]
-            if( 0 <= temp_x < self.size and 0 <= temp_y < self.size):
-                if(grid[temp_x][temp_y].check_wumpus == True):
-                    self.add_or_modify_node(wumpus_kb_x, wumpus_kb_y, 3, 3, -1, -1, self.x_kb, self.y_kb)
-                    print("SCREAM!!!")
-                    grid[temp_x][temp_y].check_wumpus = False
-                    grid[temp_x][temp_y].text = ""
-                    grid[temp_x][temp_y].image = pygame.image.load('./assets/terrain.png')
-                    for d in action_coord:
-                        x_hint = temp_x + d[0]
-                        y_hint = temp_y + d[1]
-                        if( 0 <= x_hint < self.size and 0 <= y_hint < self.size):
-                            grid[x_hint][y_hint].check_stench = False
-                            if(grid[x_hint][y_hint].text == "B,S"):
-                                grid[x_hint][y_hint].text = "B"
-                            else:
-                                grid[x_hint][y_hint].text = ""
-                    
-                    grid = generate_factor_inputfile(grid,self.size)       
+        else:
+            Message = "SHOOT!"
+            if key == "space":
+                self.points -= 100
+                action_coord= [(0,0), (0,-1), (-1,0), (1,0), (0,1)]
+                temp_x = self.x_coord + action_coord[self.current_direction.value][0]
+                temp_y = self.y_coord + action_coord[self.current_direction.value][1]
+                wumpus_kb_x = self.x_kb + action_coord[self.current_direction.value][0]
+                wumpus_kb_y = self.y_kb + action_coord[self.current_direction.value][1]
+                if( 0 <= temp_x < self.size and 0 <= temp_y < self.size):
+                    if(grid[temp_x][temp_y].check_wumpus == True):
+                        Message += ": SCREAM!!!"
+                        self.add_or_modify_node(wumpus_kb_x, wumpus_kb_y, 3, 3, -1, -1, self.x_kb, self.y_kb)
+                        print("SCREAM!!!")
+                        grid[temp_x][temp_y].check_wumpus = False
+                        grid[temp_x][temp_y].text = ""
+                        grid[temp_x][temp_y].image = pygame.image.load('./assets/terrain.png')
+                        for d in action_coord:
+                            x_hint = temp_x + d[0]
+                            y_hint = temp_y + d[1]
+                            if( 0 <= x_hint < self.size and 0 <= y_hint < self.size):
+                                grid[x_hint][y_hint].check_stench = False
+                                if(grid[x_hint][y_hint].text == "B,S"):
+                                    grid[x_hint][y_hint].text = "B"
+                                else:
+                                    grid[x_hint][y_hint].text = ""
+                        
+                        grid = generate_factor_inputfile(grid,self.size)       
                     
         self.update_previous_node(grid,current_x,current_y,window) 
-        self.draw_agent(grid,window)   
+        self.draw_agent(grid,window, Message)   
     
     def move_to (self, neighbor, grid, window):
         x, y = self.x_kb, self.y_kb
@@ -315,7 +326,7 @@ class agent():
             for node in self.knowledge_base:
                 if node.x == leastVisited.x and node.y == leastVisited.y:
                     self.move_to(node, grid, window)
-
+    '''
     def shoot(self, neighbor, grid, window):
         x, y = self.x_kb, self.y_kb
         if neighbor.x - self.x_kb == -1 and self.current_direction != act.Action.UP:
@@ -338,7 +349,22 @@ class agent():
             self.move_agent("space", grid, window)
             self.has_shoot = True
             return
-       
+    '''
+    def shoot(self, neighbor, grid, window):
+        x, y = self.x_kb, self.y_kb
+        if neighbor.x - self.x_kb == -1 and self.current_direction != act.Action.UP:
+            self.move_agent("w", grid, window) 
+        if neighbor.x - self.x_kb == 1 and self.current_direction != act.Action.DOWN:
+            self.move_agent("s", grid, window)
+        if neighbor.y - self.y_kb == -1 and self.current_direction != act.Action.LEFT:
+            self.move_agent("a", grid, window)      
+        if neighbor.y - self.y_kb == 1 and self.current_direction != act.Action.RIGHT:
+            self.move_agent("d", grid, window)
+
+        self.move_agent("space", grid, window)
+        pygame.time.delay(200)
+        self.has_shoot = True
+
     def update_previous_node(self,grid,x,y,window):
         grid[x][y].check_agent=False
         grid[x][y].direction = 0
@@ -347,8 +373,9 @@ class agent():
     def is_death(self):
         return self.is_alive == False
     
-    def draw_agent(self,grid,window):
+    def draw_agent(self,grid,window, Message):
         self.draw_points()
+        self.draw_action(Message)
         grid[self.x_coord][self.y_coord].check_agent = True
         grid[self.x_coord][self.y_coord].check_open =True
         if(grid[self.x_coord][self.y_coord].check_wumpus == True
@@ -361,6 +388,7 @@ class agent():
             self.points += 1000 # gain gold
             grid[self.x_coord][self.y_coord].check_gold = False
         self.draw_points()
+        self.draw_action(Message)
         
         grid[self.x_coord][self.y_coord].direction = self.current_direction
         grid[self.x_coord][self.y_coord].draw(window)
@@ -376,6 +404,21 @@ class agent():
         
         # Blit the text surface onto the screen
         init.WINDOW.blit(points_surface, points_rect)
+
+        # Update the display only in the region where the points are
+        pygame.display.update()
+
+    def draw_action(self, Message):
+        pygame.draw.rect(init.WINDOW, init.WHITE, init.action_area)
+        font_top = pygame.font.Font('dlxfont.ttf', 14)
+        action_surface = font_top.render(Message, True, init.PINK)
+        action_rect = action_surface.get_rect()
+        action_rect.center = 400, 150//2
+        
+        init.WINDOW.fill(init.WHITE, action_rect)
+        
+        # Blit the text surface onto the screen
+        init.WINDOW.blit(action_surface, action_rect)
 
         # Update the display only in the region where the points are
         pygame.display.update()

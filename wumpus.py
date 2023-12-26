@@ -29,7 +29,7 @@ def main(window, width, height):
     new_game = False
     run = True
     window.fill(init.WHITE)
-    agent.draw_agent(grid,window)
+    agent.draw_agent(grid,window, "NONE")
     while run:
         pygame.draw.rect(window, init.WHITE, init.game_area)
         # move to the exist room
@@ -58,7 +58,7 @@ def main(window, width, height):
                 agent = agent_lib.previous_agent(size,grid,x_agent,y_agent)
                 agent_lib.setWall(grid, size)
             
-            agent.draw_agent(grid,window)
+            agent.draw_agent(grid,window, "NONE")
             new_game = False
 
         restart = btn.Button(10, 5, "Restart", click4)
@@ -75,7 +75,7 @@ def main(window, width, height):
                 grid= drawer.make_grid_color(size, width, height, temp_grid)
                 agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
                 agent_lib.setWall(grid, size)
-                agent.draw_agent(grid,window)
+                agent.draw_agent(grid,window, "NONE")
 
             if(run.is_click()):
                 click3 = True
