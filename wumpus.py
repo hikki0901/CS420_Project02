@@ -81,6 +81,7 @@ def main(window, width, height):
                 click3 = True
                 while(agent.check_win == False and agent.is_alive == True):
                     agent.move(grid, window)
+                    #agent.draw_action("Message")
                     pygame.draw.rect(window, init.WHITE, init.game_area)
                     drawer.draw_update(window,grid,size,width,height)    
                     pygame.time.delay(200)

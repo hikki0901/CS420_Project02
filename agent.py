@@ -118,26 +118,6 @@ class agent():
                     self.neighbor[i].x_knowledge = node.x_knowledge
                     self.neighbor[i].y_knowledge = node.y_knowledge
 
-        # dir = [(0, -1), (-1, 0), (1, 0), (0, 1)]
-        
-        # i = 0
-        # for dir in dir:
-        #     nx = self.x_coord + dir[0]
-        #     ny = self.y_coord + dir[1]
-        #     check = True
-
-        #     if grid[nx][ny] == "wall":
-        #         check = False
-
-        #     if check == True:
-        #         if i == 0: self.neighbor_action.append(act.Action.LEFT)
-        #         if i == 1: self.neighbor_action.append(act.Action.UP)
-        #         if i == 2: self.neighbor_action.append(act.Action.DOWN)
-        #         if i == 3: self.neighbor_action.append(act.Action.RIGHT)
-        #         self.neighbor.append(grid[nx][ny])
-            
-        #     i =  i + 1
-
     def add_or_modify_node (self, x, y, isPit, isWumpus, isBreeze, isStench, x_knowledge, y_knowledge):
         for node in self.knowledge_base:
             if node.x == x and node.y == y:
@@ -290,8 +270,6 @@ class agent():
                     
                     grid = generate_factor_inputfile(grid,self.size)       
                     
-        # print(self.x_coord,self.y_coord)       
-        
         self.update_previous_node(grid,current_x,current_y,window) 
         self.draw_agent(grid,window)   
     
@@ -309,30 +287,6 @@ class agent():
             neighbor.countVisit += 1
             self.has_move = True
         else: self.has_move = False
-
-    
-    def check_enclosed(self):
-        extreme_upper = []
-        extreme_lower = []
-
-        max_col, min_col = float('-inf'), float('inf')
-        for node in self.knowledge_base:
-            max_col = max(max_col, node.y)
-            min_col = min(min_col, node.y)
-        
-
-        for i in range(min_col, max_col):
-            max_row, min_row = float('-inf'), float('inf')
-            for node in self.knowledge_base:
-                if node.y == i:
-                    max_row = max(max_row, node.x)
-                    min_row = min(min_row, node.x)
-            extreme_upper.append(max_row)
-            extreme_lower.append(min_row)
-
-        if len(extreme_lower) == len(extreme_upper):
-            return True
-        return False
 
     def move (self, grid, window):
         if self.has_move or self.has_shoot:
@@ -384,60 +338,6 @@ class agent():
             self.move_agent("space", grid, window)
             self.has_shoot = True
             return
-        
-    def shoot_extra(self, grid, direction, window): 
-        if direction == "right":
-            self.current_direction == act.Action.RIGHT
-        if direction == "left":
-            self.current_direction == act.Action.LEFT
-        if direction == "up":
-            self.current_direction == act.Action.UP
-        if direction == "down":
-            self.current_direction == act.Action.DOWN
-        shot_cell = self.kill_wumpus()
-        self.check_wumpus(grid, shot_cell)
-        self.move_agent("space", grid, window)
-
-    def check_wumpus(self, grid, node):
-        tmpNode = grid[node.x + self.x_og][node.y + self.y_og]
-        if tmpNode == "W":
-            print("Scream")
-        self.add_or_modify_node(self, node.x, node.y, 3, 3)
-
-    def kill_wumpus(self):
-        self.has_shoot = True
-        if self.current_direction == act.Action.LEFT:
-            for tmp_neigh in self.neighbor:
-                if tmp_neigh.x_kb == self.x_kb and tmp_neigh.y_kb == self.y_kb - 1:
-                    return tmp_neigh
-            return None
-        elif self.current_direction == act.Action.UP:
-            for tmp_neigh in self.neighbor:
-                if tmp_neigh.x_kb == self.x_kb - 1 and tmp_neigh.y_kb == self.y_kb:
-                    return tmp_neigh
-            return None
-        elif self.current_direction == act.Action.DOWN:
-            for tmp_neigh in self.neighbor:
-                if tmp_neigh.x_kb == self.x_kb + 1 and tmp_neigh.y_kb == self.y_kb:
-                    return tmp_neigh
-            return None
-        elif self.current_direction == act.Action.RIGHT:
-            for tmp_neigh in self.neighbor:
-                if tmp_neigh.x_kb == self.x_kb and tmp_neigh.y_kb == self.y_kb + 1:
-                    return tmp_neigh
-            return None
-
-    # # reload map after kill wumpus
-    # def reload_map(self,grid):
-    #     for i in range(self.size):
-    #         for j in range(self.size):
-    #             if(grid[i][j].check_wumpus == True):
-    #                 dir = [(-1,0),(0,-1),(1,0),(0,1)]
-    #                 for d in dir:
-    #                     x_stench = i + d[0]
-    #                     y_stench = j + d[1]
-    #                     if (0<= x_stench <self.size and 0<= y_stench < self.size):
-    #                         grid[x_stench][y_stench].check_stench = True 
        
     def update_previous_node(self,grid,x,y,window):
         grid[x][y].check_agent=False
@@ -462,8 +362,6 @@ class agent():
             grid[self.x_coord][self.y_coord].check_gold = False
         self.draw_points()
         
-        
-        ## draw map
         grid[self.x_coord][self.y_coord].direction = self.current_direction
         grid[self.x_coord][self.y_coord].draw(window)
     
