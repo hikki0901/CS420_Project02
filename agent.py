@@ -87,25 +87,25 @@ class agent():
     def get_neighbors(self, grid):
         self.neighbor = []
         tmpMove = []
-        
+       
         if grid[self.x_coord][self.y_coord].left != "wall":
             node = knownNode(0,0,0,0,0,0)
             self.neighbor.append(node)
             tmpMove.append([0,-1])
-        if grid[self.x_coord][self.y_coord].down != "wall":
-            node = knownNode(0,0,0,0,0,0)
-            self.neighbor.append(node)
-            tmpMove.append([1, 0])
         if grid[self.x_coord][self.y_coord].right != "wall":
             node = knownNode(0,0,0,0,0,0)
             self.neighbor.append(node)
             tmpMove.append([0, 1])
+        if grid[self.x_coord][self.y_coord].down != "wall":
+            node = knownNode(0,0,0,0,0,0)
+            self.neighbor.append(node)
+            tmpMove.append([1, 0])
         if grid[self.x_coord][self.y_coord].up != "wall":
             node = knownNode(0,0,0,0,0,0)
             self.neighbor.append(node)
             tmpMove.append([-1, 0])
         
-
+    
         for i in range(len(self.neighbor)):
             self.neighbor[i].x = self.x_kb + tmpMove[i][0]
             self.neighbor[i].y = self.y_kb + tmpMove[i][1]
@@ -341,10 +341,19 @@ class agent():
         self.checkWithKB(grid)
         if len(self.neighbor) != 0: 
             for node in self.neighbor:
-                if node.isWumpus == 2 and not self.has_shoot:
-                    self.shoot(node, grid, window)
+                if node.isWumpus == 2:
+                    while not self.has_shoot:
+                        self.shoot(node, grid, window)
+                    self.move_to(node, grid, window)
                     return
-
+            count = sum(1 for node in self.neighbor if node.isWumpus == 1)
+            if count - len(self.neighbor) <= 1:
+                filtered_neighbor = [node for node in self.neighbor if node.isPit == 3 and node.isWumpus == 1]
+                if len(filtered_neighbor) > 0:
+                    while not self.has_shoot:
+                        self.shoot(filtered_neighbor[0], grid, window)
+                    self.move_to(filtered_neighbor[0], grid, window)
+                    return
             filtered_neighbor = [node for node in self.neighbor if node.isPit == 3 and node.isWumpus != 1]
             if len(filtered_neighbor) > 0:
                 self.neighbor = filtered_neighbor
