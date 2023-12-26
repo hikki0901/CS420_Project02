@@ -264,8 +264,11 @@ class agent():
             action_coord= [(0,0), (0,-1), (-1,0), (1,0), (0,1)]
             temp_x = self.x_coord + action_coord[self.current_direction.value][0]
             temp_y = self.y_coord + action_coord[self.current_direction.value][1]
+            wumpus_kb_x = self.x_kb + action_coord[self.current_direction.value][0]
+            wumpus_kb_y = self.y_kb + action_coord[self.current_direction.value][1]
             if( 0 <= temp_x < self.size and 0 <= temp_y < self.size):
                 if(grid[temp_x][temp_y].check_wumpus == True):
+                    self.add_or_modify_node(wumpus_kb_x, wumpus_kb_y, 3, 3, -1, -1)
                     print("SCREAM!!!")
                     grid[temp_x][temp_y].check_wumpus = False
                     grid[temp_x][temp_y].text = ""
