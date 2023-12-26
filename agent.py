@@ -261,7 +261,7 @@ class agent():
         
         if key == "space":
             self.points -= 100
-            action_coord= [(0,0),(0,-1), (-1,0),(1,0),(0,1)]
+            action_coord= [(0,0), (0,-1), (-1,0), (1,0), (0,1)]
             temp_x = self.x_coord + action_coord[self.current_direction.value][0]
             temp_y = self.y_coord + action_coord[self.current_direction.value][1]
             if( 0 <= temp_x < self.size and 0 <= temp_y < self.size):
@@ -371,7 +371,7 @@ class agent():
             self.has_shoot = True
             return
         
-    def shoot_extra(self, grid, direction): 
+    def shoot_extra(self, grid, direction, window): 
         if direction == "right":
             self.current_direction == act.Action.RIGHT
         if direction == "left":
@@ -382,16 +382,16 @@ class agent():
             self.current_direction == act.Action.DOWN
         shot_cell = self.kill_wumpus()
         self.check_wumpus(grid, shot_cell)
+        self.move_agent("space", grid, window)
 
     def check_wumpus(self, grid, node):
         tmpNode = grid[node.x + self.x_og][node.y + self.y_og]
         if tmpNode == "W":
             print("Scream")
-            self.add_or_modify_node(self, node.x, node.y, 3, 3)
-        return None
+        self.add_or_modify_node(self, node.x, node.y, 3, 3)
 
     def kill_wumpus(self):
-        self.killing_wumpus = True
+        self.has_shoot = True
         if self.current_direction == act.Action.LEFT:
             for tmp_neigh in self.neighbor:
                 if tmp_neigh.x_kb == self.x_kb and tmp_neigh.y_kb == self.y_kb - 1:
