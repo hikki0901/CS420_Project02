@@ -83,7 +83,7 @@ def main(window, width, height):
                     agent.move(grid, window)
                     pygame.draw.rect(window, init.WHITE, init.game_area)
                     drawer.draw_update(window,grid,size,width,height)    
-                    pygame.time.delay(500)
+                    pygame.time.delay(100)
                     
                 
                 
