@@ -326,8 +326,9 @@ class agent():
         return False
 
     def move (self, grid, window):
-        if self.has_move:
+        if self.has_move or self.has_shoot:
             self.addToKB(grid[self.x_coord][self.y_coord]) 
+            self.has_shoot = False
         self.checkWithKB(grid)
         if len(self.neighbor) != 0: 
             print ("neighbor: ")
@@ -336,8 +337,8 @@ class agent():
             for node in self.neighbor:
                 if node.isWumpus == 2 and not self.has_shoot:
                     self.shoot(node, grid, window)
-                    self.has_shoot = True
                     return
+
             filtered_neighbor = [node for node in self.neighbor if node.isPit == 3]
             if len(filtered_neighbor) > 0:
                 self.neighbor = filtered_neighbor
