@@ -374,6 +374,8 @@ class agent():
         return self.is_alive == False
     
     def draw_agent(self,grid,window, Message):
+        if(grid[self.x_coord][self.y_coord].check_gold == True):
+            Message = "GOLD FOUND!"
         self.draw_points()
         self.draw_action(Message)
         grid[self.x_coord][self.y_coord].check_agent = True
