@@ -266,6 +266,8 @@ class agent():
                         Message += ": SCREAM!!!"
                         self.add_or_modify_node(wumpus_kb_x, wumpus_kb_y, 3, 3, -1, -1, self.x_kb, self.y_kb)
                         print("SCREAM!!!")
+                        wumpus_death = pygame.mixer.Sound('sound/headshot.wav')
+                        wumpus_death.play()
                         grid[temp_x][temp_y].check_wumpus = False
                         grid[temp_x][temp_y].text = ""
                         grid[temp_x][temp_y].image = pygame.image.load('./assets/terrain.png')

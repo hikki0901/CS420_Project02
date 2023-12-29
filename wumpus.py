@@ -34,6 +34,8 @@ def main(window, width, height):
         pygame.draw.rect(window, init.WHITE, init.game_area)
         # move to the exist room
         if(agent.check_win):
+            winner= pygame.mixer.Sound('sound/winner.wav')
+            winner.play()
             drawer.draw_update(window,grid,size,width,height) 
             drawer.draw_game_over_message(window,"WINNER","GOOD JOB!")
             pygame.time.delay(500)
@@ -71,7 +73,8 @@ def main(window, width, height):
             if(restart.is_click()):
                 pygame.draw.rect(window, init.WHITE, init.header_area)
                 click4 = True
-                
+                restart.set_click()
+                restart.draw()
                 grid= drawer.make_grid_color(size, width, height, temp_grid)
                 agent,x_agent,y_agent = agent_lib.random_agent(size,grid)
                 agent_lib.setWall(grid, size)
@@ -79,6 +82,8 @@ def main(window, width, height):
 
             if(run.is_click()):
                 click3 = True
+                run.set_click()
+                run.draw()
                 while(agent.check_win == False and agent.is_alive == True):
                     agent.move(grid, window)
                     #agent.draw_action("Message")
