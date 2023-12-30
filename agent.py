@@ -84,6 +84,7 @@ class agent():
         self.has_shoot = False
         self.killing_wumpus = False
         self.percept = []
+        self.count = 0
 
     def get_neighbors(self, grid):
         self.neighbor = []
@@ -312,9 +313,13 @@ class agent():
             self.addToKB(grid[self.x_coord][self.y_coord]) 
             self.has_shoot = False 
             if (len(self.percept) > 0): 
-                print(f"From: ({self.x_kb}, {self.y_kb})")
                 for node in self.percept:
+                    if node.isPit not in [2,3] or node.isWumpus not in [2,3]:
+                        continue
+                    self.count += 1
+                    print(f"R{self.count}: ", end = "")
                     node.print_status()
+                    
         self.checkWithKB(grid)
         if len(self.neighbor) != 0:
             for node in self.neighbor:

@@ -16,13 +16,11 @@ class knownNode:
         self.y_knowledge = y_knowledge
 
     def print_status(self):
-        print(f"Node at ({self.x}, {self.y}):")
-        print(f"isPit: {self.get_status(self.isPit)}")
-        print(f"isWumpus: {self.get_status(self.isWumpus)}")
+        print(f"({self.get_status(self.isPit)}isPit ^ {self.get_status(self.isWumpus)}isWumpus)({self.x}, {self.y})")
         
 
     def get_status(self, value):
-            status_map = {0: 'Unknown', 1: 'Maybe', 2: 'Yes', 3: 'No', -1: 'Unknown'}
+            status_map = {2: '', 3: '~'}
             return status_map.get(value, 'Unknown')
     
     # def get_pos(self):
