@@ -83,6 +83,7 @@ class agent():
         self.has_move = True
         self.has_shoot = False
         self.killing_wumpus = False
+        self.percept = []
 
     def get_neighbors(self, grid):
         self.neighbor = []
@@ -138,11 +139,14 @@ class agent():
                 node.isStench = isStench
                 node.x_knowledge = x_knowledge
                 node.y_knowledge = y_knowledge
+                self.percept.append(node)
                 return
         newNode = knownNode(x, y, isPit, isWumpus, x_knowledge, y_knowledge)
         self.knowledge_base.append(newNode)
+        self.percept.append(newNode)
                 
     def addToKB(self, curNode):
+        self.percept = []
         if curNode.is_breeze() and not curNode.is_stench():
             self.add_or_modify_node(self.x_kb, self.y_kb, 3, 3, 1, 0, self.x_kb, self.y_kb)
             if curNode.left != "wall":
@@ -299,14 +303,20 @@ class agent():
         if self.x_kb != x or self.y_kb != y:
             neighbor.countVisit += 1
             self.has_move = True
-        else: self.has_move = False
+        else: 
+            self.has_move = False
+            
 
     def move (self, grid, window):
         if self.has_move or self.has_shoot:
             self.addToKB(grid[self.x_coord][self.y_coord]) 
-            self.has_shoot = False
+            self.has_shoot = False 
+            if (len(self.percept) > 0): 
+                print(f"From: ({self.x_kb}, {self.y_kb})")
+                for node in self.percept:
+                    node.print_status()
         self.checkWithKB(grid)
-        if len(self.neighbor) != 0: 
+        if len(self.neighbor) != 0:
             for node in self.neighbor:
                 if node.isWumpus == 2:
                     while not self.has_shoot:

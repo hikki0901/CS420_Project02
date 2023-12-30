@@ -14,6 +14,16 @@ class knownNode:
         # position to gain knowledge from
         self.x_knowledge = x_knowledge
         self.y_knowledge = y_knowledge
+
+    def print_status(self):
+        print(f"Node at ({self.x}, {self.y}):")
+        print(f"isPit: {self.get_status(self.isPit)}")
+        print(f"isWumpus: {self.get_status(self.isWumpus)}")
+        
+
+    def get_status(self, value):
+            status_map = {0: 'Unknown', 1: 'Maybe', 2: 'Yes', 3: 'No', -1: 'Unknown'}
+            return status_map.get(value, 'Unknown')
     
     # def get_pos(self):
     #     return self.x, self.y
