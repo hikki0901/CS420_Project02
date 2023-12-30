@@ -15,8 +15,11 @@ class knownNode:
         self.x_knowledge = x_knowledge
         self.y_knowledge = y_knowledge
 
-    def print_status(self):
-        print(f"({self.get_status(self.isPit)}isPit ^ {self.get_status(self.isWumpus)}isWumpus)({self.x}, {self.y})")
+    def print_pit_status(self):
+        print(f"{self.get_status(self.isPit)}isPit({self.x}, {self.y})")
+
+    def print_wumpus_status(self):
+        print(f"{self.get_status(self.isWumpus)}isWumpus({self.x}, {self.y})")
         
 
     def get_status(self, value):

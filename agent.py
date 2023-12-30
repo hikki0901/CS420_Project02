@@ -314,11 +314,14 @@ class agent():
             self.has_shoot = False 
             if (len(self.percept) > 0): 
                 for node in self.percept:
-                    if node.isPit not in [2,3] or node.isWumpus not in [2,3]:
-                        continue
-                    self.count += 1
-                    print(f"R{self.count}: ", end = "")
-                    node.print_status()
+                    if node.isPit in [2,3]:
+                        self.count += 1
+                        print(f"R{self.count}: ", end = "")
+                        node.print_pit_status()
+                    if node.isWumpus in [2,3]:
+                        self.count += 1
+                        print(f"R{self.count}: ", end = "")
+                        node.print_wumpus_status()
                     
         self.checkWithKB(grid)
         if len(self.neighbor) != 0:
