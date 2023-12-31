@@ -61,6 +61,7 @@ def main(window, width, height):
                 agent_lib.setWall(grid, size)
             
             agent.draw_agent(grid,window, "NONE")
+            pygame.draw.rect(init.WINDOW, init.WHITE, init.percept_area)
             new_game = False
 
         restart = btn.Button(10, 5, "Restart", click4)
@@ -90,7 +91,7 @@ def main(window, width, height):
                     #agent.draw_action("Message")
                     pygame.draw.rect(window, init.WHITE, init.game_area)
                     drawer.draw_update(window,grid,size,width,height)    
-                    pygame.time.delay(200)
+                    pygame.time.delay(1000)
                     
                 
                 

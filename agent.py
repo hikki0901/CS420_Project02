@@ -316,12 +316,11 @@ class agent():
                 for node in self.percept:
                     if node.isPit in [2,3]:
                         self.count += 1
-                        print(f"R{self.count}: ", end = "")
-                        node.print_pit_status()
+                        node.print_pit_status(self.count)
                     if node.isWumpus in [2,3]:
                         self.count += 1
-                        print(f"R{self.count}: ", end = "")
-                        node.print_wumpus_status()
+                        node.print_wumpus_status(self.count)
+                print("---")
                     
         self.checkWithKB(grid)
         if len(self.neighbor) != 0:
@@ -432,7 +431,7 @@ class agent():
 
     def draw_action(self, Message):
         pygame.draw.rect(init.WINDOW, init.WHITE, init.action_area)
-        font_top = pygame.font.Font('dlxfont.ttf', 14)
+        font_top = pygame.font.Font('dlxfont.ttf', 12)
         action_surface = font_top.render(Message, True, init.PINK)
         action_rect = action_surface.get_rect()
         action_rect.center = 400, 150//2
