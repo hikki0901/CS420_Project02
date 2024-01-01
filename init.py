@@ -6,7 +6,7 @@ from enum import Enum
 
 pygame.init()
 
-WIDTH = 500
+WIDTH = 800
 HEIGHT= 600
 
 ROW = 10
@@ -27,9 +27,9 @@ WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Move your step")
 font = pygame.font.Font('dlxfont.ttf', 12)
 tile_font = pygame.font.Font('dlxfont.ttf', 12)
-Error_area = pygame.Rect(WIDTH // 4-50, HEIGHT//2 -35, 350, 120)
+Error_area = pygame.Rect((WIDTH - 300) // 4-50, HEIGHT//2 -35, 350, 120)
 game_area = pygame.Rect(0,100,WIDTH,HEIGHT-100) 
 header_area = pygame.Rect(0,0,WIDTH,50)
-point_area = pygame.Rect(300,5,200,45)
-action_area = pygame.Rect(290,50,210,50)
-percept_area = pygame.Rect(0,50,290,50)
+point_area = pygame.Rect(300,5,200,70)
+action_area = pygame.Rect(510,25,290,50)
+percept_area = pygame.Rect(510,110,290,50)

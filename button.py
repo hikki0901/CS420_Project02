@@ -11,7 +11,7 @@ class Button:
         
     def draw(self):
         text_button = init.font.render(self.text, True, init.BLACK)
-        button = pygame.rect.Rect((self.x, self.y), (len(self.text)*16, 45))
+        button = pygame.rect.Rect((self.x, self.y), (120, 50))
         if self.click:
             pygame.draw.rect(init.WINDOW, init.GREEN, button, 0,5)
         else:

@@ -8,10 +8,10 @@ def draw_game_over_message(window,text1,text2):
     pygame.draw.rect(window, init.RED, init.Error_area, 0, 40)
     font1 = pygame.font.Font('dlxfont.ttf', 42)
     text = font1.render(text1, True, init.YELLOW)
-    text_rect = text.get_rect(center=(init.WIDTH // 2 - 5, init.HEIGHT // 2))
+    text_rect = text.get_rect(center=((init.WIDTH - 300) // 2 - 5, init.HEIGHT // 2))
     font2 = pygame.font.Font('dlxfont.ttf', 32)
     text_level = font2.render(text2, True, init.YELLOW)
-    text_level_rect = text_level.get_rect(center=(init.WIDTH // 2, init.HEIGHT // 2+54))
+    text_level_rect = text_level.get_rect(center=((init.WIDTH - 300) // 2, init.HEIGHT // 2+54))
     window.blit(text, text_rect)
     window.blit(text_level, text_level_rect)
     
@@ -35,7 +35,7 @@ def make_grid_color(size, width, height, grid):
     for i in range(size):
         grid_color.append([])
         for j in range(size):
-            node = node_lib.Node(i, j, width // size, height // size,size)
+            node = node_lib.Node(i, j, (width - 300) // size, height // size,size)
 
             if(grid[i][j] == "P"):
                 node.set_pit_color()
@@ -59,12 +59,18 @@ def make_grid_color(size, width, height, grid):
 
 def draw_grid_line(window, size, width, height):
     gap1 = height // size
-    gap2 = width // size
+    gap2 = (width - 300) // size
         
     for i in range(size):
-        pygame.draw.line(window, init.BLACK, (0, i * gap1 + 100), (width, i * gap1 +100))
-        for j in range(size):
-            pygame.draw.line(window, init.BLACK, (j * gap2, 100), (j * gap2, height+100))
+        if i == 0:
+            pygame.draw.line(window, init.BLACK, (0, i * gap1 + 100), (width, i * gap1 +100))
+        else:
+            pygame.draw.line(window, init.BLACK, (0, i * gap1 + 100), (width - 300, i * gap1 +100))
+        for j in range(size + 1):
+            if j == size:
+                pygame.draw.line(window, init.BLACK, (j * gap2, 0), (j * gap2, height+100))
+            else:
+                pygame.draw.line(window, init.BLACK, (j * gap2, 100), (j * gap2, height+100))
 
 def draw_update(window, grid, size, width, height):   
     for i in grid:

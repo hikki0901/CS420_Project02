@@ -313,14 +313,13 @@ class agent():
             self.addToKB(grid[self.x_coord][self.y_coord]) 
             self.has_shoot = False 
             if (len(self.percept) > 0): 
-                for node in self.percept:
-                    if node.isPit in [2,3]:
-                        self.count += 1
-                        node.print_pit_status(self.count)
-                    if node.isWumpus in [2,3]:
-                        self.count += 1
-                        node.print_wumpus_status(self.count)
-                print("---")
+                # for node in self.percept:
+                #     if node.isPit in [2,3]:
+                #         print(node.print_pit_status(self.count))
+                #     if node.isWumpus in [2,3]:
+                #         print(node.print_wumpus_status(self.count))
+                # print("---")
+                self.draw_percept()
                     
         self.checkWithKB(grid)
         if len(self.neighbor) != 0:
@@ -419,7 +418,7 @@ class agent():
         font_top = pygame.font.Font('dlxfont.ttf', 14)
         points_surface = font_top.render("Points: " + str(self.points), True, init.PINK)
         points_rect = points_surface.get_rect()
-        points_rect.center = 400, 100//4
+        points_rect.center = 400, 100//2
         
         init.WINDOW.fill(init.WHITE, points_rect)
         
@@ -431,10 +430,10 @@ class agent():
 
     def draw_action(self, Message):
         pygame.draw.rect(init.WINDOW, init.WHITE, init.action_area)
-        font_top = pygame.font.Font('dlxfont.ttf', 12)
-        action_surface = font_top.render(Message, True, init.PINK)
+        font_top = pygame.font.Font('dlxfont.ttf', 14)
+        action_surface = font_top.render(Message, True, init.BLACK)
         action_rect = action_surface.get_rect()
-        action_rect.center = 400, 150//2
+        action_rect.center = 650, 100//2
         
         init.WINDOW.fill(init.WHITE, action_rect)
         
@@ -443,3 +442,29 @@ class agent():
 
         # Update the display only in the region where the points are
         pygame.display.update()
+
+    def draw_percept(self):
+        y_offset = 0
+        font_top = pygame.font.Font('dlxfont.ttf', 12)
+        for node in self.percept:
+            if node.isPit in [2,3]:
+                self.count += 1
+                tmp = node.print_pit_status(self.count)
+                action_surface = font_top.render(tmp, True, init.BLACK)
+                action_rect = action_surface.get_rect()
+                action_rect.topleft = 525, 200 + y_offset
+                init.WINDOW.fill(init.WHITE, action_rect)
+                init.WINDOW.blit(action_surface, action_rect)
+                y_offset += action_rect.height + 5
+            if node.isWumpus in [2,3]:
+                self.count += 1
+                tmp = node.print_wumpus_status(self.count)
+                action_surface = font_top.render(tmp, True, init.BLACK)
+                action_rect = action_surface.get_rect()
+                action_rect.topleft = 525, 200 + y_offset
+                init.WINDOW.fill(init.WHITE, action_rect)
+                init.WINDOW.blit(action_surface, action_rect)
+                y_offset += action_rect.height + 5
+        pygame.draw.rect(init.WINDOW, init.WHITE, init.percept_area)
+        pygame.display.update()
+        pygame.time.delay(1000)

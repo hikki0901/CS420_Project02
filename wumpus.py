@@ -64,8 +64,8 @@ def main(window, width, height):
             pygame.draw.rect(init.WINDOW, init.WHITE, init.percept_area)
             new_game = False
 
-        restart = btn.Button(10, 5, "Restart", click4)
-        run = btn.Button(150, 5, "Step", click3)
+        restart = btn.Button(10, 25, "Restart", click4)
+        run = btn.Button(150, 25, "Run", click3)
         drawer.draw_update(window,grid,size,width,height)     
         
         if(pygame.mouse.get_pressed()[0]) and one_press:
@@ -83,6 +83,7 @@ def main(window, width, height):
 
             if(run.is_click()):
                 click3 = True
+                # agent.move(grid, window)
                 run.set_click()
                 run.draw()
                 while(agent.check_win == False and agent.is_alive == True):
@@ -91,7 +92,7 @@ def main(window, width, height):
                     #agent.draw_action("Message")
                     pygame.draw.rect(window, init.WHITE, init.game_area)
                     drawer.draw_update(window,grid,size,width,height)    
-                    pygame.time.delay(1000)
+                    pygame.time.delay(200)
                     
                 
                 
