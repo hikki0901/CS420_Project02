@@ -24,7 +24,7 @@ IRISBLUE = (0, 181, 204)
 PINK = (255, 105, 180)
 
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Move your step")
+pygame.display.set_caption("WUMPUS WORLD")
 font = pygame.font.Font('dlxfont.ttf', 12)
 tile_font = pygame.font.Font('dlxfont.ttf', 12)
 Error_area = pygame.Rect((WIDTH - 300) // 4-50, HEIGHT//2 -35, 350, 120)
