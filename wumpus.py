@@ -11,7 +11,7 @@ import agent as agent_lib
 import drawer
                     
 def main(window, width, height):
-    file = 'input.txt'
+    file = "./input/" + 'map5.txt'
     temp_grid,size = drawer.read_grid_from_file(file)
     grid = drawer.make_grid_color(size,width,height,temp_grid)
     agent_lib.setWall(grid, size)
