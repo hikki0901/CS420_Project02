@@ -467,4 +467,4 @@ class agent():
                 y_offset += action_rect.height + 5
         pygame.draw.rect(init.WINDOW, init.WHITE, init.percept_area)
         pygame.display.update()
-        pygame.time.delay(200)
+        pygame.time.delay(1000)

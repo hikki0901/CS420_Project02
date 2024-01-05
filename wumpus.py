@@ -11,7 +11,7 @@ import agent as agent_lib
 import drawer
                     
 def main(window, width, height):
-    file = "./input/" + 'map5.txt'
+    file = "./input/" + 'map1.txt'
     temp_grid,size = drawer.read_grid_from_file(file)
     grid = drawer.make_grid_color(size,width,height,temp_grid)
     agent_lib.setWall(grid, size)
@@ -38,14 +38,14 @@ def main(window, width, height):
             winner.play()
             drawer.draw_update(window,grid,size,width,height) 
             drawer.draw_game_over_message(window,"WINNER","GOOD JOB!")
-            pygame.time.delay(200)
+            pygame.time.delay(500)
             new_game = True
 
         # kill by pit or wumpus
         if(agent.is_alive == False):
             drawer.draw_update(window,grid,size,width,height) 
             drawer.draw_game_over_message(window,"CHICKEN","GAME OVER")
-            pygame.time.delay(200)
+            pygame.time.delay(500)
             new_game = True
             
         
