@@ -313,12 +313,12 @@ class agent():
             self.addToKB(grid[self.x_coord][self.y_coord]) 
             self.has_shoot = False 
             if (len(self.percept) > 0): 
-                # for node in self.percept:
-                #     if node.isPit in [2,3]:
-                #         print(node.print_pit_status(self.count))
-                #     if node.isWumpus in [2,3]:
-                #         print(node.print_wumpus_status(self.count))
-                # print("---")
+                for node in self.percept:
+                    if node.isPit in [2,3]:
+                        print(node.print_pit_status(self.count))
+                    if node.isWumpus in [2,3]:
+                        print(node.print_wumpus_status(self.count))
+                print("---")
                 self.draw_percept()
                     
         self.checkWithKB(grid)
@@ -409,7 +409,7 @@ class agent():
             grid[self.x_coord][self.y_coord].check_gold = False
         self.draw_points()
         self.draw_action(Message)
-        
+        print(Message)
         grid[self.x_coord][self.y_coord].direction = self.current_direction
         grid[self.x_coord][self.y_coord].draw(window)
     
@@ -467,4 +467,4 @@ class agent():
                 y_offset += action_rect.height + 5
         pygame.draw.rect(init.WINDOW, init.WHITE, init.percept_area)
         pygame.display.update()
-        pygame.time.delay(1000)
+        pygame.time.delay(200)
